@@ -106,3 +106,4 @@ venv.bak/
 
 # theorem proving
 holstep
+data/holstep.db
