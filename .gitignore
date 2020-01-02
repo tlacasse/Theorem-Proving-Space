@@ -103,6 +103,11 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# VS
+.vs
+bin
+bld
+*.jsproj.user
 
 # theorem proving
 holstep

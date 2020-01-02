@@ -1,0 +1,54 @@
+@import "vars";
+
+body {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size: $font-size;
+    margin: 0px;
+    padding: 0px;
+    background-color: $c-body-bg;
+    color: $c-font;
+}
+
+#page {
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    height: 100%;
+}
+
+// Split Content
+
+$width-left: $split-ratio * 100vw;
+$width-right: (1 - $split-ratio) * 100vw;
+
+#content-left, #content-right {
+    position: absolute;
+    box-sizing: border-box;
+    top: 0;
+    height: 100vh;
+    border: $border-width groove $c-border;
+}
+
+#content-left {
+    left: 0;
+    width: $width-left;
+}
+
+#content-right {
+    left: $width-left;
+    width: $width-right;
+}
+
+// Links
+a {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a, a:link, a:visited {
+    color: $c-link;
+}
+
+a:hover, a:active {
+    color: $c-link-active;
+}
