@@ -9,7 +9,7 @@ var NavBar = (function () {
         };
     }
 
-    vm.items = [it('About', 'about')];
+    vm.items = [it('Info', 'info')];
 
     function button(item) {
         var classes = 'navbar-button';

@@ -1,10 +1,10 @@
-var About = (function () {
+var Info = (function () {
     "use strict";
     var vm = {};
 
     function content() {
         return [
-            m('div', { class: 'section-title' }, 'About'),
+            m('div', { class: 'section-title' }, 'Info'),
             m('div', { class: 'hrule' }),
             m('br'),
             m('ul', [
