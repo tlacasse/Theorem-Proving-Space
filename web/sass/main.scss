@@ -7,6 +7,7 @@ body {
     padding: 0px;
     background-color: $c-body-bg;
     color: $c-font;
+    box-sizing: border-box;
 }
 
 #page {
@@ -40,6 +41,7 @@ $width-right: (1 - $split-ratio) * 100vw;
 }
 
 // Links
+
 a {
     text-decoration: none;
     cursor: pointer;
@@ -51,4 +53,44 @@ a, a:link, a:visited {
 
 a:hover, a:active {
     color: $c-link-active;
+}
+
+// Content
+
+.content-area {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 1em;
+}
+
+.section-title {
+    font-size: 1.5em;
+    vertical-align: middle;
+    color: $c-title;
+    font-weight: bold;
+    padding-left: 1em;
+}
+
+.navbar-button {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    text-align: center;
+    padding: 0.5em;
+
+    .selected {
+        background-color: #4456ef;
+    }
+}
+
+div.hrule {
+    width: 100%;
+    height: 0.2 * $font-size;
+    border-bottom: $border-width ridge $c-border;
+}
+
+iframe {
+    width: 95%;
+    text-align: center;
+    height: 66%;
 }

@@ -2,8 +2,29 @@ var NavBar = (function () {
     "use strict";
     var vm = {};
 
+    function it(title, link) {
+        return {
+            title: title,
+            link: link,
+        };
+    }
+
+    vm.items = [it('About', 'about')];
+
+    function button(item) {
+        var classes = 'navbar-button';
+        if (m.route.get() === '/' + item.link) {
+            classes += ' selected';
+        }
+        return m('a[href=#!/' + item.link + ']', {
+            class: classes,
+            oncreate: m.route.link,
+        }, item.title)
+    }
+
     function view() {
-        return m('p', 'About');
+        console.log(m.route.get());
+        return vm.items.map(item => button(item));
     }
 
     return {
