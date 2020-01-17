@@ -77,10 +77,10 @@ a:hover, a:active {
     width: 100%;
     text-align: center;
     padding: 0.5em;
+}
 
-    .selected {
-        background-color: #4456ef;
-    }
+.navbar-button.selected {
+    background-color: $c-border;
 }
 
 div.hrule {

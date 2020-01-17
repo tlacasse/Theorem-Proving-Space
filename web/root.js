@@ -1,7 +1,7 @@
 var root = document.getElementById('page');
 
-m.route(root, '/', {
-    '/': Info,
+m.route(root, '/info', {
+    '/info': Info,
 });
 
 // error message

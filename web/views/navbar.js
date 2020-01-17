@@ -16,14 +16,14 @@ var NavBar = (function () {
         if (m.route.get() === '/' + item.link) {
             classes += ' selected';
         }
-        return m('a[href=#!/' + item.link + ']', {
+        return m(m.route.Link, {
+            href: '/' + item.link,
             class: classes,
             oncreate: m.route.link,
         }, item.title)
     }
 
     function view() {
-        console.log(m.route.get());
         return vm.items.map(item => button(item));
     }
 
