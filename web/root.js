@@ -2,6 +2,7 @@ var root = document.getElementById('page');
 
 m.route(root, '/info', {
     '/info': Info,
+    '/holstep': Holstep,
 });
 
 var App = {}
@@ -15,6 +16,14 @@ App.showError = function (exceptionObject) {
 
 App.hideError = function () {
     document.getElementById('message-box').style.display = 'none';
+}
+
+App.wait = function () {
+    document.getElementById('wall').style.display = 'block';
+}
+
+App.reenable = function () {
+    document.getElementById('wall').style.display = 'none';
 }
 
 var MessageBox = (function () {

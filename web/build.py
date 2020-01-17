@@ -9,6 +9,7 @@ def main():
     scripts = [
               'mithril-v2.0.4.min.js'
             , 'functions.js'
+            , 'views/holstep.js'
             , 'views/info.js'
             , 'views/navbar.js'
             , 'root.js'
@@ -16,6 +17,7 @@ def main():
     
     styles = [
               '_css/main.css'
+            , '_css/holstep.css'
             ]
     
     print('REMOVE FILES')

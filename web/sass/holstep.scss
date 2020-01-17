@@ -1,0 +1,33 @@
+﻿@import "vars";
+
+$data-split-ratio: $split-ratio * 1.2;
+
+$width-left: $data-split-ratio * 100%;
+$width-right: (1 - $data-split-ratio) * 100%;
+
+#holstep-content-left, #holstep-content-right {
+    position: absolute;
+    box-sizing: border-box;
+    top: 0;
+    height: 100%;
+    border: $border-width groove $c-border;
+}
+
+#holstep-content-left {
+    left: 0;
+    width: $width-left;
+    overflow-y: scroll;
+}
+
+#holstep-content-right {
+    left: $width-left;
+    width: $width-right;
+}
+
+.color-training {
+    background-color: #350264;
+}
+
+.color-testing {
+    background-color: #014f65;
+}

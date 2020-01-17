@@ -19,6 +19,36 @@ function objectToArray(value) {
     }
     return array;
 }
+
+var API = {};
+
+API.get = function (url, success) {
+    App.wait();
+    m.request({
+        method: 'GET',
+        dataType: 'jsonp',
+        url: ('http://localhost:5000/api/' + url),
+    }).then(function (data) {
+        success(data);
+        App.reenable();
+    }).catch(function (e) {
+        App.showError(e);
+        App.reenable();
+    });
+}
+
+var TO = {};
+
+TO.conjecture = function (data) {
+    return {
+        id: data[0],
+        isTraining: data[1] === 1,
+        name: data[2],
+        text: data[3],
+        tokens: data[4],
+    };
+}
+
 var Templates = {};
 
 Templates.splitContent = function (left, right) {
