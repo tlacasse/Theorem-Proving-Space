@@ -40,4 +40,3 @@ class HolStep:
         if not train:
             i += self.TEST_ID_START
         return _DB.execute_single('SELECT * FROM Conjecture WHERE Id={}'.format(i))
-    
