@@ -68,20 +68,17 @@
     <Content Include=".gitignore" />
     <Content Include="index.html" />
     <Content Include="README.md" />
+    <Content Include="run_web.sh" />
+    <Content Include="setup.sh" />
     <Content Include="WebView.sln" />
-    <Content Include="web\compile_sass.py" />
-    <Content Include="web\css\errormessage.css" />
-    <Content Include="web\css\main.css" />
-    <Content Include="web\css\vars.css" />
+    <Content Include="web\build.py" />
+    <Content Include="web\favicon.ico" />
     <Content Include="web\functions.js" />
     <Content Include="web\mithril-v2.0.4.min.js" />
     <Content Include="web\root.js" />
-    <Content Include="web\sass\errormessage.scss" />
     <Content Include="web\sass\main.scss" />
     <Content Include="web\sass\vars.scss" />
-    <Content Include="web\templates.js" />
-    <Content Include="web\views\about.js" />
-    <Content Include="web\views\errormessage.js" />
+    <Content Include="web\views\info.js" />
     <Content Include="web\views\navbar.js" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).targets" />

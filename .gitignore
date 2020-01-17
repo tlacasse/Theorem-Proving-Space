@@ -112,3 +112,5 @@ bld
 # theorem proving
 holstep
 data/holstep.db
+_build
+_css
