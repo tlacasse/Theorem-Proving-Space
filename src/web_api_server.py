@@ -2,8 +2,6 @@ import flask
 import glob
 from holstep import HolStep
 
-db = HolStep()
-
 app = flask.Flask('API')
 app.config['DEBUG'] = True
 
@@ -23,12 +21,16 @@ def content_script():
 def content_icon():
     return flask.send_file('web/favicon.ico')
 
-@app.route('/api/holstep/conjecture/train/<i>', methods=['GET'])
+@app.route('/api/holstep/conjecture/train/<int:i>', methods=['GET'])
 def get_conjecture_train(i):
-    return flask.jsonify(db.get_conjecture(int(i), train=True))
+    db = HolStep()
+    with db:
+        return flask.jsonify(db.get_conjecture(i, train=True))
 
-@app.route('/api/holstep/conjecture/test/<i>', methods=['GET'])
+@app.route('/api/holstep/conjecture/test/<int:i>', methods=['GET'])
 def get_conjecture_test(i):
-    return flask.jsonify(db.get_conjecture(int(i), train=False))
+    db = HolStep()
+    with db:
+        return flask.jsonify(db.get_conjecture(i, train=False))
 
 app.run()

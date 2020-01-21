@@ -91,7 +91,7 @@ class LineReader:
     
     def _as_str(self, text):
         # escape
-        return text.replace("'", "''")
+        return text.replace("'", "''").strip()
 
 def read_folder(name, is_train):
     db = sqlite3.connect('holstep.db')

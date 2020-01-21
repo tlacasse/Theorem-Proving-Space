@@ -55,7 +55,10 @@ var Holstep = (function () {
         if (vm.id === null) {
             return '';
         }
-        return m('pre', JSON.stringify(vm.conjecture, null, 2));
+        return m('div', { class: 'content-area' }, [
+            m('div', { class: 'section-title' }, vm.conjecture.name),
+            m('div', { class: 'hrule' }),
+        ]);
     }
 
     function view() {

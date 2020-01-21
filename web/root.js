@@ -5,13 +5,13 @@ m.route(root, '/info', {
     '/holstep': Holstep,
 });
 
-var App = {}
+var App = {};
 
-App.exception = [['', '']];
+App.failedPath = '';
 
-App.showError = function (exceptionObject) {
+App.showError = function (failedPath) {
     document.getElementById('message-box').style.display = 'block';
-    App.exception = objectToArray(exceptionObject);
+    App.failedPath = failedPath;
 }
 
 App.hideError = function () {
@@ -26,19 +26,8 @@ App.reenable = function () {
     document.getElementById('wall').style.display = 'none';
 }
 
-var MessageBox = (function () {
-    "use strict";
-
-    function propertyPairToRow(pair) {
-        return (
-            m('div', { class: 'message-box-pair' }, [
-                m('div', { class: 'message-box-key' }, pair[0]),
-                m('div', { class: 'message-box-value' }, pair[1]),
-            ])
-        );
-    }
-
-    function view() {
+var MessageBox = {
+    view: function () {
         return [
             m('div', { class: 'message-box-title' },
                 m('button', {
@@ -47,14 +36,10 @@ var MessageBox = (function () {
                 }, 'X')
             ),
             m('div', { class: 'message-box-detail' },
-                App.exception.map(x => propertyPairToRow(x))
+                m('iframe', { src: App.failedPath })
             ),
         ];
-    }
-
-    return {
-        view: view,
-    };
-})();
+    },
+};
 
 m.mount(document.getElementById('message-box'), MessageBox);

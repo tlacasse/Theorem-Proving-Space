@@ -3,6 +3,8 @@ import datetime
 import os
 
 def main():
+    if not os.path.exists('_build'):
+        os.mkdir('_build')
     print('COMPILE SASS')
     sass.compile(dirname=('sass', '_css'), output_style='compressed')
     

@@ -13,9 +13,7 @@ function nbsp() {
 function objectToArray(value) {
     var array = [];
     for (var k in value) {
-        if (value.hasOwnProperty(k)) {
-            array.push([k, value[k]]);
-        }
+        array.push([k, value[k]]);
     }
     return array;
 }
@@ -23,17 +21,18 @@ function objectToArray(value) {
 var API = {};
 
 API.get = function (url, success) {
+    url = 'http://localhost:5000/api/' + url;
     App.wait();
     m.request({
         method: 'GET',
         dataType: 'jsonp',
-        url: ('http://localhost:5000/api/' + url),
+        url: url,
     }).then(function (data) {
+        App.reenable();
         success(data);
-        App.reenable();
     }).catch(function (e) {
-        App.showError(e);
         App.reenable();
+        App.showError(url);
     });
 }
 

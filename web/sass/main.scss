@@ -147,6 +147,11 @@ $c-box-border: #8f8f8f;
     cursor: pointer;
 }
 
+.message-box-detail iframe {
+    width: 100%;
+    height: 100%;
+}
+
 // Other
 
 #wall {
