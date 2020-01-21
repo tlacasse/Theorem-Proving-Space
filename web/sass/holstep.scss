@@ -7,7 +7,6 @@ $width-right: (1 - $data-split-ratio) * 100%;
 
 #holstep-content-left, #holstep-content-right {
     position: absolute;
-    box-sizing: border-box;
     top: 0;
     height: 100%;
     border: $border-width groove $c-border;

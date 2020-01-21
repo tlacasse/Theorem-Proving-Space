@@ -12,6 +12,7 @@ class HolStep:
     def __enter__(self):
         self.db = sqlite3.connect(self.path)
         self.cursor = self.db.cursor()
+        return self
         
     def __exit__(self, exception_type, exception_value, traceback):
         self.cursor = None
@@ -19,6 +20,7 @@ class HolStep:
         self.db = None
         
     def execute_single(self, query):
+        print(query)
         self.cursor.execute(query)
         result = self.cursor.fetchone()
         if result is None:
@@ -26,6 +28,7 @@ class HolStep:
         return result
     
     def execute_many(self, query):
+        print(query)
         return list(self.cursor.execute(query))
     
     def get_conjecture(self, i, train=True):

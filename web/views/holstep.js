@@ -52,7 +52,7 @@ var Holstep = (function () {
     }
 
     function right() {
-        if (vm.id === null) {
+        if (!vm.hasData) {
             return '';
         }
         return m('div', { class: 'content-area' }, [

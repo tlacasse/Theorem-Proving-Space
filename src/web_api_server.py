@@ -22,15 +22,13 @@ def content_icon():
     return flask.send_file('web/favicon.ico')
 
 @app.route('/api/holstep/conjecture/train/<int:i>', methods=['GET'])
-def get_conjecture_train(i):
-    db = HolStep()
-    with db:
+def holstep_conjecture_train_get(i):
+    with HolStep() as db:
         return flask.jsonify(db.get_conjecture(i, train=True))
 
 @app.route('/api/holstep/conjecture/test/<int:i>', methods=['GET'])
-def get_conjecture_test(i):
-    db = HolStep()
-    with db:
+def holstep_conjecture_test_get(i):
+    with HolStep() as db:
         return flask.jsonify(db.get_conjecture(i, train=False))
 
 app.run()

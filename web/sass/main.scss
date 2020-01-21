@@ -1,13 +1,16 @@
 @import "vars";
 
-body {
+* {
     font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-    font-size: $font-size;
     margin: 0px;
     padding: 0px;
-    background-color: $c-body-bg;
     color: $c-font;
     box-sizing: border-box;
+}
+
+body {
+    font-size: $font-size;
+    background-color: $c-body-bg;
 }
 
 #page {
@@ -24,7 +27,6 @@ $width-right: (1 - $split-ratio) * 100vw;
 
 #content-left, #content-right {
     position: absolute;
-    box-sizing: border-box;
     top: 0;
     height: 100vh;
     border: $border-width groove $c-border;
@@ -128,7 +130,6 @@ $c-box-border: #8f8f8f;
     position: relative;
     width: 100%;
     height: 90%;
-    overflow: auto;
     box-sizing: border-box;
 }
 
@@ -145,6 +146,8 @@ $c-box-border: #8f8f8f;
 .message-box-button {
     background-color: #ffffff;
     cursor: pointer;
+    color: black;
+    padding: 0.2em;
 }
 
 .message-box-detail iframe {

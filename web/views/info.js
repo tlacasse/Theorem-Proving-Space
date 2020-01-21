@@ -16,10 +16,7 @@ var Info = (function () {
     }
 
     function view() {
-        return Templates.splitContent(
-            NavBar.view(),
-            m('div', { class: 'content-area' }, content()),
-        );
+        return m('div', { class: 'content-area' }, content());
     }
 
     return {
