@@ -107,6 +107,14 @@ table.holstep-info {
         }
     }
 
+    tr:hover {
+        cursor: pointer;
+
+        td {
+            color: $c-link-active;
+        }
+    }
+
     tr:nth-child(even) {
         background-color: $c-accent-bg;
     }

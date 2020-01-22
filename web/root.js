@@ -24,6 +24,7 @@ function splitView(baseView) {
 m.route(root, '/info', {
     '/info': splitView(Info),
     '/holstep': splitView(HolstepSearch),
+    '/holstep/view/:id': splitView(Holstep),
 });
 
 var App = {};

@@ -18,13 +18,13 @@ var NavBar = (function () {
 
     function button(item) {
         var classes = 'navbar-button';
-        if (m.route.get() === '/' + item.link) {
+        var test = '/' + item.link;
+        if (m.route.get().slice(0, test.length) === test) {
             classes += ' selected';
         }
         return m(m.route.Link, {
             href: '/' + item.link,
             class: classes,
-            oncreate: m.route.link,
         }, item.title)
     }
 

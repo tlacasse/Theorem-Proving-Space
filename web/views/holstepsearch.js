@@ -45,6 +45,10 @@
         });
     }
 
+    function goToConjecture(id) {
+        m.route.set('/holstep/view/' + String(id));
+    }
+
     /////////////////////////////////////////
 
     function topBox() {
@@ -112,11 +116,15 @@
     }
 
     function conjectureToRecord(data) {
-        return m('tr', [
-            m('td', data[1] === 1 ? 'train' : 'test'),
-            m('td', data[0]),
-            m('td', data[2]),
-        ]);
+        return m('tr', {
+            onclick: function () {
+                goToConjecture(data[0]);
+            }
+        }, [
+                m('td', data[1] === 1 ? 'train' : 'test'),
+                m('td', data[0]),
+                m('td', data[2]),
+            ]);
     }
 
     function botBox() {
@@ -149,6 +157,8 @@
     return {
         view: view,
         search: search,
+        goToConjecture: goToConjecture,
+        nextPage: nextPage,
         getQuery: function () {
             return vm.query;
         },
