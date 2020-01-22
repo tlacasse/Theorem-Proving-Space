@@ -35,3 +35,10 @@ class HolStep:
         if not train:
             i += self.TEST_ID_START
         return self.execute_single('SELECT * FROM Conjecture WHERE Id={}'.format(i))
+
+def build_search_conjecture(query):
+    query = query.replace("'", '').replace('\\', '').strip()
+    queries = query.split(' ')
+    queries = map(lambda s: "Name LIKE '%{}%'".format(s), queries)
+    queries = ' OR '.join(queries)
+    return 'SELECT Id, IsTraining, Name FROM Conjecture WHERE ' + queries

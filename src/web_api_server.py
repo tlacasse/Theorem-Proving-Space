@@ -1,9 +1,29 @@
 import flask
 import glob
+import math
+
+import holstep
 from holstep import HolStep
 
 app = flask.Flask('API')
 app.config['DEBUG'] = True
+
+class _STATE:
+    
+    def __init__(self):
+        self.holstep_search_results = []
+        self.holstep_search_pages = 1
+        self.HOLSTEP_SEARCH_PERPAGE = 10
+        
+    def update_holstep_search(self, results):
+        self.holstep_search_results = results
+        self.holstep_search_pages = math.ceil(len(results) / self.HOLSTEP_SEARCH_PERPAGE)
+        
+    def fetch_holstep_search_page(self, page):
+        size = self.HOLSTEP_SEARCH_PERPAGE
+        return self.holstep_search_results[size * page : size * (page + 1)]
+
+STATE = _STATE()
 
 @app.route('/')
 def home():
@@ -30,5 +50,21 @@ def holstep_conjecture_train_get(i):
 def holstep_conjecture_test_get(i):
     with HolStep() as db:
         return flask.jsonify(db.get_conjecture(i, train=False))
+    
+@app.route('/api/holstep/search/<string:query>', methods=['GET'])
+def holstep_search(query):
+    query = holstep.build_search_conjecture(query)
+    with HolStep() as db:
+        results = db.execute_many(query)
+        STATE.update_holstep_search(results)
+        return holstep_search_page(0)
+    
+@app.route('/api/holstep/search/page/<int:page>', methods=['GET'])
+def holstep_search_page(page):
+    return flask.jsonify(STATE.fetch_holstep_search_page(page))
 
+@app.route('/api/holstep/search/info', methods=['GET'])
+def holstep_search_info():
+    return flask.jsonify([len(STATE.holstep_search_results), STATE.holstep_search_pages])
+      
 app.run()

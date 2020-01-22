@@ -18,11 +18,23 @@ function objectToArray(value) {
     return array;
 }
 
+function clamp(x, min, max) {
+    if (x < min) {
+        return min;
+    }
+    if (x > max) {
+        return max;
+    }
+    return x;
+}
+
 var API = {};
 
-API.get = function (url, success) {
+API._get = function (url, success, block) {
     url = 'http://localhost:5000/api/' + url;
-    App.wait();
+    if (block) {
+        App.wait();
+    }
     m.request({
         method: 'GET',
         dataType: 'jsonp',
@@ -34,6 +46,14 @@ API.get = function (url, success) {
         App.reenable();
         App.showError(url);
     });
+}
+
+API.get = function (url, success) {
+    API._get(url, success, true);
+}
+
+API.aget = function (url, success) {
+    API._get(url, success, false);
 }
 
 var TO = {};

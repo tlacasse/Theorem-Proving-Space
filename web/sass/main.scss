@@ -2,8 +2,6 @@
 
 * {
     font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-    margin: 0px;
-    padding: 0px;
     color: $c-font;
     box-sizing: border-box;
 }
@@ -11,6 +9,8 @@
 body {
     font-size: $font-size;
     background-color: $c-body-bg;
+    margin: 0px;
+    padding: 0px;
 }
 
 #page {

@@ -30,3 +30,80 @@ $width-right: (1 - $data-split-ratio) * 100%;
 .color-testing {
     background-color: #014f65;
 }
+
+$top-height: 7%;
+
+.holstep-topbox, .holstep-botbox, .holstep-midbox {
+    width: 100%;
+    position: absolute;
+}
+
+.holstep-topbox {
+    height: $top-height;
+}
+
+.holstep-midbox {
+    top: $top-height;
+    height: $top-height;
+    background-color: $c-dark-bg;
+}
+
+.holstep-botbox {
+    top: $top-height * 2;
+    height: 100% - $top-height - $top-height;
+}
+
+#holstep-search {
+    width: 100%;
+    height: 100%;
+    background-color: $c-border;
+    text-align: center;
+    font-size: 2 * $font-size;
+}
+
+.holstep-info {
+    padding: 0.2em;
+    height: 100%;
+    text-align: center;
+}
+
+.holstep-info div {
+    vertical-align: middle;
+    text-align: center;
+    margin: auto;
+}
+
+$side-padding: 4em;
+
+.holstep-info-left {
+    padding-left: $side-padding;
+    float: left;
+}
+
+.holstep-info-right {
+    padding-right: $side-padding;
+    float: right;
+
+    a, span {
+        padding: 0.25em;
+    }
+}
+
+#holstep-search-results {
+    width: 100%;
+    height: 100%;
+    border-bottom: $border-width groove $c-border;
+
+    tr {
+        width: 100%;
+
+        td {
+            font-size: 1.2em;
+            padding-left: 1em;
+        }
+    }
+
+    tr:nth-child(even) {
+        background-color: $c-accent-bg;
+    }
+}
