@@ -13,7 +13,7 @@ class _STATE:
     def __init__(self):
         self.holstep_search_results = []
         self.holstep_search_pages = 1
-        self.HOLSTEP_SEARCH_PERPAGE = 20
+        self.HOLSTEP_SEARCH_PERPAGE = 19
         
     def update_holstep_search(self, results):
         self.holstep_search_results = results

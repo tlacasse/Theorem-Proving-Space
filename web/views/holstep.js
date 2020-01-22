@@ -122,13 +122,17 @@
         if (!vm.hasData) {
             return '';
         }
-        var height = vm.results.length * 5;
+        var height = (vm.results.length + 1) * 5;
+        var records = vm.results.map(conjectureToRecord);
+        records.unshift(m('tr', [
+            m('th', { width: '20%' }, 'Type'),
+            m('th', { width: '20%' }, 'Id'),
+            m('th', { width: '60%' }, 'Conjecture Name'),
+        ]));
         return m('table', {
             height: String(height) + '%',
             id: 'holstep-search-results',
-        }, [
-                vm.results.map(conjectureToRecord)
-            ]);
+        }, records);
     }
 
     function view() {

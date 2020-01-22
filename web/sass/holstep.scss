@@ -68,7 +68,7 @@ table.holstep-info {
     tr {
         width: 100%;
 
-        td {
+        td, th {
             text-align: center;
             font-size: 1.2em;
         }
@@ -99,10 +99,14 @@ $side-padding: 4em;
     tr {
         width: 100%;
 
-        td {
+        td, th {
             font-size: 1.2em;
             padding-left: 1em;
             border: 1px solid $c-border;
+        }
+
+        th {
+            background-color: $c-dark-bg;
         }
     }
 
