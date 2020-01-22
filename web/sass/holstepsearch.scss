@@ -1,0 +1,113 @@
+﻿@import "vars";
+
+$data-split-ratio: $split-ratio * 1.2;
+
+$width-left: $data-split-ratio * 100%;
+$width-right: (1 - $data-split-ratio) * 100%;
+
+#holstep-content-left, #holstep-content-right {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border: $border-width groove $c-border;
+}
+
+#holstep-content-left {
+    left: 0;
+    width: $width-left;
+    overflow-y: scroll;
+}
+
+#holstep-content-right {
+    left: $width-left;
+    width: $width-right;
+}
+
+.color-training {
+    background-color: #350264;
+}
+
+.color-testing {
+    background-color: #014f65;
+}
+
+$top-height: 7%;
+
+.holstep-topbox, .holstep-botbox, .holstep-midbox {
+    width: 100%;
+    position: absolute;
+}
+
+.holstep-topbox {
+    height: $top-height;
+}
+
+.holstep-midbox {
+    top: $top-height;
+    height: $top-height;
+    background-color: $c-dark-bg;
+}
+
+.holstep-botbox {
+    top: $top-height * 2;
+    height: 100% - $top-height - $top-height;
+}
+
+#holstep-search {
+    width: 100%;
+    height: 100%;
+    background-color: $c-border;
+    text-align: center;
+    font-size: 2 * $font-size;
+}
+
+table.holstep-info {
+    width: 100%;
+    height: 100%;
+
+    tr {
+        width: 100%;
+
+        td, th {
+            text-align: center;
+            font-size: 1.2em;
+        }
+    }
+}
+
+.holstep-info-left {
+    text-align: left;
+    padding-left: 4em;
+    width: 30%;
+}
+
+.holstep-info-right {
+    a, span {
+        padding: 0.25em 0.5em 0.25em 0.5em;
+        border: $border-width groove $c-border;
+    }
+}
+
+#holstep-search-results {
+    width: 100%;
+    border-bottom: $border-width groove $c-border;
+    border-collapse: collapse;
+
+    tr {
+        width: 100%;
+
+        td, th {
+            font-size: 1.2em;
+            padding-left: 1em;
+            border: 1px solid $c-border;
+        }
+
+        th {
+            background-color: $c-dark-bg;
+        }
+    }
+
+    tr:nth-child(even) {
+        background-color: $c-accent-bg;
+    }
+}
