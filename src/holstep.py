@@ -41,4 +41,6 @@ def build_search_conjecture(query):
     queries = query.split(' ')
     queries = map(lambda s: "Name LIKE '%{}%'".format(s), queries)
     queries = ' OR '.join(queries)
-    return 'SELECT Id, IsTraining, Name FROM Conjecture WHERE ' + queries
+    if (len(queries) > 0):
+        queries = ' WHERE ' + queries
+    return 'SELECT Id, IsTraining, Name FROM Conjecture' + queries
