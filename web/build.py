@@ -5,6 +5,10 @@ import os
 def main():
     if not os.path.exists('_build'):
         os.mkdir('_build')
+        
+    print('REMOVE FILES')
+    clear_dir('_build')
+    
     print('COMPILE SASS')
     sass.compile(dirname=('sass', '_css'), output_style='compressed')
     
@@ -23,10 +27,7 @@ def main():
             , '_css/holstep.css'
             , '_css/holstepsearch.css'
             ]
-    
-    print('REMOVE FILES')
-    clear_dir('_build')
-    
+
     append = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     print('CONCAT SCRIPTS')
     concat_files(scripts, '_build/script_{}.js'.format(append))
@@ -44,7 +45,7 @@ def concat_files(input_list, output):
             
 def clear_dir(path):
     for f in os.listdir(path):
-        f = '_build/' + f
+        f = path + '/' + f
         print(f)
         os.remove(f)
                 

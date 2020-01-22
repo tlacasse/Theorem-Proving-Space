@@ -30,10 +30,8 @@
 
     function delaySearch() {
         if (vm.timeout !== null) {
-            console.log('clear');
             clearTimeout(vm.timeout);
         }
-        console.log(vm.query);
         vm.timeout = setTimeout(function () {
             search(vm.query);
         }, 500);
@@ -47,10 +45,6 @@
         });
     }
 
-    function oninit() {
-        delaySearch();
-    }
-
     /////////////////////////////////////////
 
     function topBox() {
@@ -59,6 +53,7 @@
                 type: 'text',
                 id: 'holstep-search',
                 placeholder: 'search',
+                value: vm.query,
                 onkeyup: function (e) {
                     vm.query = e.target.value;
                     delaySearch();
@@ -149,8 +144,9 @@
         ];
     }
 
+    delaySearch();
+
     return {
-        oninit: oninit,
         view: view,
         search: search,
         getQuery: function () {
