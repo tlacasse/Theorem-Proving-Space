@@ -13,17 +13,19 @@
 
     function search(query) {
         query = query.replace(/[^._\w\d\s]/g, '');
-        if (query !== '') {
-            API.get('holstep/search/' + query, function (data) {
-                vm.results = data;
-                API.get('holstep/search/info', function (data) {
-                    vm.countResults = data[0];
-                    vm.countPages = data[1];
-                    vm.page = 0;
-                    vm.hasData = true;
-                });
-            });
+        var uri = 'holstep/search/q/' + query;
+        if (query === '') {
+            uri = 'holstep/search/all'
         }
+        API.get(uri, function (data) {
+            vm.results = data;
+            API.get('holstep/search/info', function (data) {
+                vm.countResults = data[0];
+                vm.countPages = data[1];
+                vm.page = 0;
+                vm.hasData = true;
+            });
+        });
     }
 
     function delaySearch() {
@@ -43,6 +45,10 @@
         API.get('holstep/search/page/' + vm.page, function (data) {
             vm.results = data;
         });
+    }
+
+    function oninit() {
+        delaySearch();
     }
 
     /////////////////////////////////////////
@@ -112,9 +118,9 @@
 
     function conjectureToRecord(data) {
         return m('tr', [
-            m('td', { width: '20%' }, data[1] === 1 ? 'train' : 'test'),
-            m('td', { width: '20%' }, data[0]),
-            m('td', { width: '60%' }, data[2]),
+            m('td', data[1] === 1 ? 'train' : 'test'),
+            m('td', data[0]),
+            m('td', data[2]),
         ]);
     }
 
@@ -125,9 +131,9 @@
         var height = (vm.results.length + 1) * 5;
         var records = vm.results.map(conjectureToRecord);
         records.unshift(m('tr', [
-            m('th', { width: '20%' }, 'Type'),
-            m('th', { width: '20%' }, 'Id'),
-            m('th', { width: '60%' }, 'Conjecture Name'),
+            m('th', { width: '15%' }, 'Type'),
+            m('th', { width: '15%' }, 'Id'),
+            m('th', { width: '70%' }, 'Conjecture Name'),
         ]));
         return m('table', {
             height: String(height) + '%',
@@ -144,6 +150,7 @@
     }
 
     return {
+        oninit: oninit,
         view: view,
         search: search,
         getQuery: function () {

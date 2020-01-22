@@ -51,13 +51,17 @@ def holstep_conjecture_test_get(i):
     with HolStep() as db:
         return flask.jsonify(db.get_conjecture(i, train=False))
     
-@app.route('/api/holstep/search/<string:query>', methods=['GET'])
+@app.route('/api/holstep/search/q/<string:query>', methods=['GET'])
 def holstep_search(query):
     query = holstep.build_search_conjecture(query)
     with HolStep() as db:
         results = db.execute_many(query)
         STATE.update_holstep_search(results)
         return holstep_search_page(0)
+    
+@app.route('/api/holstep/search/all', methods=['GET'])
+def holstep_search_all():
+    return holstep_search('')
     
 @app.route('/api/holstep/search/page/<int:page>', methods=['GET'])
 def holstep_search_page(page):

@@ -75,16 +75,13 @@ table.holstep-info {
     }
 }
 
-$side-padding: 4em;
-
 .holstep-info-left {
     text-align: left;
-    padding-left: $side-padding;
+    padding-left: 4em;
+    width: 30%;
 }
 
 .holstep-info-right {
-    padding-right: $side-padding;
-
     a, span {
         padding: 0.25em 0.5em 0.25em 0.5em;
         border: $border-width groove $c-border;
