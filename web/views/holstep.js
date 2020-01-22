@@ -19,6 +19,7 @@
                 API.get('holstep/search/info', function (data) {
                     vm.countResults = data[0];
                     vm.countPages = data[1];
+                    vm.page = 0;
                     vm.hasData = true;
                 });
             });
@@ -60,30 +61,53 @@
         ];
     }
 
+    function displayIfEnoughPagesStyle(n) {
+        return vm.countPages > n ? '' : 'display: none;';
+    }
+
     function midBox() {
         if (!vm.hasData) {
             return '';
         }
-        return [
-            m('div', { class: 'holstep-info holstep-info-left' },
-                m('div', vm.countResults + ' results.')
-            ),
-            m('div', { class: 'holstep-info holstep-info-right' }, [
-                m('a', {
-                    onclick: function () { nextPage(-100000); },
-                }, '1'),
-                m('a', {
-                    onclick: function () { nextPage(-1); },
-                }, '<'),
-                m('span', vm.page + 1),
-                m('a', {
-                    onclick: function () { nextPage(1); },
-                }, '>'),
-                m('a', {
-                    onclick: function () { nextPage(100000); },
-                }, vm.countPages),
-            ]),
-        ];
+
+        var show10 = displayIfEnoughPagesStyle(10);
+        var show100 = displayIfEnoughPagesStyle(100);
+        return m('table', { class: 'holstep-info' },
+            m('tr', [
+                m('td', { class: 'holstep-info-left' }, vm.countResults + ' results.'),
+                m('td', { class: 'holstep-info-right' }, [
+                    m('a', {
+                        onclick: function () { nextPage(-100000); },
+                    }, '1'),
+                    m('a', {
+                        style: show100,
+                        onclick: function () { nextPage(-100); },
+                    }, '<<<'),
+                    m('a', {
+                        style: show10,
+                        onclick: function () { nextPage(-10); },
+                    }, '<<'),
+                    m('a', {
+                        onclick: function () { nextPage(-1); },
+                    }, '<'),
+                    m('span', vm.page + 1),
+                    m('a', {
+                        onclick: function () { nextPage(1); },
+                    }, '>'),
+                    m('a', {
+                        style: show10,
+                        onclick: function () { nextPage(10); },
+                    }, '>>'),
+                    m('a', {
+                        style: show100,
+                        onclick: function () { nextPage(100); },
+                    }, '>>>'),
+                    m('a', {
+                        onclick: function () { nextPage(100000); },
+                    }, vm.countPages),
+                ])
+            ])
+        );
     }
 
     function conjectureToRecord(data) {
@@ -98,9 +122,13 @@
         if (!vm.hasData) {
             return '';
         }
-        return m('table', { id: 'holstep-search-results' }, [
-            vm.results.map(conjectureToRecord)
-        ]);
+        var height = vm.results.length * 5;
+        return m('table', {
+            height: String(height) + '%',
+            id: 'holstep-search-results',
+        }, [
+                vm.results.map(conjectureToRecord)
+            ]);
     }
 
     function view() {
