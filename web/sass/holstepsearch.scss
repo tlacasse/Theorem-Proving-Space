@@ -53,12 +53,36 @@ $top-height: 7%;
     height: 100% - $top-height - $top-height;
 }
 
+$search-bar-width: 87%;
+
 #holstep-search {
-    width: 100%;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: $search-bar-width;
     height: 100%;
     background-color: $c-border;
     text-align: center;
     font-size: 2 * $font-size;
+}
+
+#holstep-sort-swap {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 100% - $search-bar-width;
+    height: 100%;
+    font-size: $font-size * 1.2;
+    margin: auto;
+    text-align: center;
+    vertical-align: central;
+    background-color: $c-dark-bg;
+    border-bottom: $border-width groove $c-border;
+}
+
+#holstep-sort-swap:hover {
+    cursor: pointer;
+    background-color: $c-border;
 }
 
 table.holstep-info {

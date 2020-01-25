@@ -30,7 +30,7 @@ function clamp(x, min, max) {
 
 var API = {};
 
-API._get = function (url, success, block) {
+API._get = function (url, success, block, params) {
     url = 'http://localhost:5000/api/' + url;
     if (block) {
         App.wait();
@@ -39,6 +39,7 @@ API._get = function (url, success, block) {
         method: 'GET',
         dataType: 'jsonp',
         url: url,
+        params: params,
     }).then(function (data) {
         App.reenable();
         success(data);
@@ -49,11 +50,15 @@ API._get = function (url, success, block) {
 }
 
 API.get = function (url, success) {
-    API._get(url, success, true);
+    API._get(url, success, true, {});
 }
 
 API.aget = function (url, success) {
-    API._get(url, success, false);
+    API._get(url, success, false, {});
+}
+
+API.pget = function (url, params, success) {
+    API._get(url, success, true, params);
 }
 
 var TO = {};

@@ -7,6 +7,7 @@
     vm.countPages = null;
     vm.page = null;
     vm.results = null;
+    vm.sort = 'id';
 
     vm.hasData = false;
     vm.timeout = null;
@@ -15,9 +16,9 @@
         query = query.replace(/[^._\w\d\s]/g, '');
         var uri = 'holstep/search/q/' + query;
         if (query === '') {
-            uri = 'holstep/search/all'
+            uri = 'holstep/search/all';
         }
-        API.get(uri, function (data) {
+        API.pget(uri, { sort: vm.sort }, function (data) {
             vm.results = data;
             API.get('holstep/search/info', function (data) {
                 vm.countResults = data[0];
@@ -63,6 +64,15 @@
                     delaySearch();
                 },
             }),
+            m('div', {
+                id: 'holstep-sort-swap',
+                onclick: function (e) {
+                    var isId = vm.sort === 'id';
+                    vm.sort = isId ? 'name' : 'id';
+                    e.target.innerText = isId ? 'SORT: NAME' : 'SORT: ID';
+                    delaySearch();
+                },
+            }, 'SORT: ID')
         ];
     }
 
@@ -161,6 +171,9 @@
         nextPage: nextPage,
         getQuery: function () {
             return vm.query;
+        },
+        getSort: function () {
+            return vm.sort;
         },
         private: function () {
             return vm;

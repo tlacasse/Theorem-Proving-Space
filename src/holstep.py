@@ -36,11 +36,12 @@ class HolStep:
             i += self.TEST_ID_START
         return self.execute_single('SELECT * FROM Conjecture WHERE Id={}'.format(i))
 
-def build_search_conjecture(query):
+def build_search_conjecture(query, order_by):
     query = query.replace("'", '').replace('\\', '').strip()
     queries = query.split(' ')
     queries = map(lambda s: "Name LIKE '%{}%'".format(s), queries)
     queries = ' OR '.join(queries)
     if (len(queries) > 0):
         queries = ' WHERE ' + queries
+    queries += ' ORDER BY IsTraining DESC, ' + order_by
     return 'SELECT Id, IsTraining, Name FROM Conjecture' + queries

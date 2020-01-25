@@ -43,7 +43,8 @@ def content_icon():
     
 @app.route('/api/holstep/search/q/<string:query>', methods=['GET'])
 def holstep_search(query):
-    query = holstep.build_search_conjecture(query)
+    sort_by = flask.request.args.get('sort')
+    query = holstep.build_search_conjecture(query, sort_by)
     with HolStep() as db:
         results = db.execute_many(query)
         STATE.update_holstep_search(results)
