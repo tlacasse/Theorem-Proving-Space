@@ -40,16 +40,6 @@ def content_script():
 @app.route('/favicon.ico')
 def content_icon():
     return flask.send_file('web/favicon.ico')
-
-@app.route('/api/holstep/conjecture/train/<int:i>', methods=['GET'])
-def holstep_conjecture_train_get(i):
-    with HolStep() as db:
-        return flask.jsonify(db.get_conjecture(i, train=True))
-
-@app.route('/api/holstep/conjecture/test/<int:i>', methods=['GET'])
-def holstep_conjecture_test_get(i):
-    with HolStep() as db:
-        return flask.jsonify(db.get_conjecture(i, train=False))
     
 @app.route('/api/holstep/search/q/<string:query>', methods=['GET'])
 def holstep_search(query):
@@ -70,5 +60,10 @@ def holstep_search_page(page):
 @app.route('/api/holstep/search/info', methods=['GET'])
 def holstep_search_info():
     return flask.jsonify([len(STATE.holstep_search_results), STATE.holstep_search_pages])
-      
+
+@app.route('/api/holstep/conjecture/<int:i>', methods=['GET'])
+def holstep_conjecture_get(i):
+    with HolStep() as db:
+        return flask.jsonify(db.execute_single('SELECT * FROM Conjecture WHERE Id={}'.format(i)))
+    
 app.run()

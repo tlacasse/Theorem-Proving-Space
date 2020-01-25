@@ -97,6 +97,26 @@ iframe {
     height: 66%;
 }
 
+float-right {
+    float: right;
+}
+
+float-left {
+    float: left;
+}
+
+align-right {
+    text-align: right;
+}
+
+align-left {
+    text-align: left;
+}
+
+table, tr {
+    width: 100%;
+}
+
 // Error Message
 
 $box-left: 15vw;

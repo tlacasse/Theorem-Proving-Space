@@ -80,6 +80,7 @@ Templates.splitContent = function (left, right) {
 var App = {};
 
 App.failedPath = '';
+App.uniqueCounter = 0;
 
 App.showError = function (failedPath) {
     document.getElementById('message-box').style.display = 'block';
@@ -96,6 +97,15 @@ App.wait = function () {
 
 App.reenable = function () {
     document.getElementById('wall').style.display = 'none';
+}
+
+App.uniqueId = function () {
+    App.uniqueCounter++;
+    return 'id' + String(App.uniqueCounter);
+}
+
+App.get = function (id) {
+    return document.getElementById(id);
 }
 
 var MessageBox = {

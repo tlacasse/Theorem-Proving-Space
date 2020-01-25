@@ -77,9 +77,11 @@
     <Content Include="web\mithril-v2.0.4.min.js" />
     <Content Include="web\root.js" />
     <Content Include="web\sass\holstep.scss" />
+    <Content Include="web\sass\holstepsearch.scss" />
     <Content Include="web\sass\main.scss" />
     <Content Include="web\sass\vars.scss" />
     <Content Include="web\views\holstep.js" />
+    <Content Include="web\views\holstepsearch.js" />
     <Content Include="web\views\info.js" />
     <Content Include="web\views\navbar.js" />
   </ItemGroup>
