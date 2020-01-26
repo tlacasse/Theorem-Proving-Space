@@ -30,14 +30,80 @@
         for (var i = 0; i < code.length; i++) {
             var char = code.charAt(i);
             var type = vm.getTypeChar(char);
-            if (type !== prev) {
-                tokenized.push(token);
+            if (type !== prev || char === '(' || char === ')') {
+                tokenized.push([token, vm.getType(token)]);
                 token = '';
             }
             token += char;
             prev = type;
         }
         return tokenized;
+    }
+
+    function toCodeToken(token, type) {
+        var classes = 'code-' + type;
+        return m('span', { class: classes }, token.replace(' ', '_'));
+    }
+
+    function sizeOfNextParenBlock(tokens, i) {
+        i++;
+        var count = 0;
+        while (tokens[i][0] !== ')') {
+            if (tokens[i][0] === '(') {
+                return 1000;
+            }
+            if (vm.getType(tokens[i][0]) !== 'SPC') {
+                count++;
+            }
+            i++;
+        }
+        return count;
+    }
+
+    vm.prettyprintTXT = function (code) {
+        var result = []
+        var tokens = vm.parse(code);
+        var indent = 0;
+        function addNewLine() {
+            result.push(m('br'));
+            for (var j = 0; j < indent; j++) {
+                result.push(toCodeToken('__', 'SPC'));
+            }
+        }
+        for (var i = 0; i < tokens.length; i++) {
+            var on = tokens[i][0];
+            var type = tokens[i][1];
+            function addToResult() {
+                result.push(toCodeToken(on, type));
+            }
+            if (type === 'PAR') {
+                if (on === '(') {
+                    if (sizeOfNextParenBlock(tokens, i) <= 3) {
+                        function addCurrentToken() {
+                            result.push(toCodeToken(tokens[i][0], tokens[i][1]));
+                        }
+                        while (tokens[i][0] !== ')') {
+                            addCurrentToken();
+                            i++;
+                        }
+                        addCurrentToken();
+                    } else {
+                        addToResult();
+                        indent++;
+                        addNewLine();
+                    }
+                } else if (on === ')') {
+                    indent--;
+                    addNewLine();
+                    addToResult();
+                } else {
+                    addToResult();
+                }
+            } else {
+                addToResult();
+            }
+        }
+        return result;
     }
 
     vm.toDisplay = function (code, putId, hide) {
@@ -49,9 +115,11 @@
             attrs.style = 'display: none;';
         }
         var tokens = vm.parse(code);
-        tokens = tokens.map(function (t) {
-            var classes = 'code-' + vm.getType(t);
-            return m('span', { class: classes }, t.replace(' ', '_'));
+        tokens = tokens.map(function (toktype) {
+            var token = toktype[0];
+            var type = toktype[1];
+            var classes = 'code-' + type;
+            return m('span', { class: classes }, token.replace(' ', '_'));
         });
         return m('div', attrs, tokens);
     }
@@ -81,6 +149,10 @@
             }
         }, 'TXT');
         return toTwoPart(button, [viewTXT, viewTOK]);
+    }
+
+    vm.toPrettyVersion = function (code) {
+        return m('div', { class: 'holstep-code-area' }, vm.prettyprintTXT(code));
     }
 
     return vm;
@@ -113,7 +185,8 @@ var Holstep = (function () {
             ])),
             m('div', { class: 'hrule' }),
             m('br'),
-            HolstepCode.toTextAndTokenSwapCode(vm.conjecture.text, vm.conjecture.tokens),
+            //HolstepCode.toTextAndTokenSwapCode(vm.conjecture.text, vm.conjecture.tokens),
+            HolstepCode.toPrettyVersion(vm.conjecture.text),
         ]);
     }
 

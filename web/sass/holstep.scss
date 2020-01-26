@@ -35,7 +35,7 @@
     cursor: pointer;
 }
 
-.holstep-code {
+.holstep-code, .holstep-code-area {
     width: 100%;
     background-color: $c-dark-bg;
     padding: 0.2em;
@@ -65,5 +65,15 @@
 
     .code-SYM {
         color: #05f459;
+    }
+}
+
+.holstep-code-area {
+    height: 85%;
+    overflow: auto;
+    border: $border-width ridge $c-border;
+
+    span {
+        display: initial;
     }
 }

@@ -72,7 +72,7 @@
                     e.target.innerText = isId ? 'SORT: NAME' : 'SORT: ID';
                     delaySearch();
                 },
-            }, 'SORT: ID')
+            }, vm.sort === 'id' ? 'SORT: ID' : 'SORT: NAME')
         ];
     }
 
