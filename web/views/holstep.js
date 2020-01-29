@@ -2,6 +2,8 @@
     "use strict";
     var vm = {};
 
+    vm.parenMap = {};
+
     vm.getTypeChar = function (char) {
         if (char.match(/[a-z0-9_]/i)) {
             return 'VAR';
@@ -40,9 +42,10 @@
         return tokenized;
     }
 
-    function toCodeToken(token, type) {
+    function toCodeToken(token, type, props) {
         var classes = 'code-' + type;
-        return m('span', { class: classes }, token.replace(' ', '_'));
+        props.class = classes;
+        return m('span', props, token.replace(' ', '_'));
     }
 
     function sizeOfNextParenBlock(tokens, i) {
@@ -67,20 +70,20 @@
         function addNewLine() {
             result.push(m('br'));
             for (var j = 0; j < indent; j++) {
-                result.push(toCodeToken('__', 'SPC'));
+                result.push(['__', 'SPC']);
             }
         }
         for (var i = 0; i < tokens.length; i++) {
             var on = tokens[i][0];
             var type = tokens[i][1];
             function addToResult() {
-                result.push(toCodeToken(on, type));
+                result.push([on, type]);
             }
             if (type === 'PAR') {
                 if (on === '(') {
                     if (sizeOfNextParenBlock(tokens, i) <= 3) {
                         function addCurrentToken() {
-                            result.push(toCodeToken(tokens[i][0], tokens[i][1]));
+                            result.push([tokens[i][0], tokens[i][1]]);
                         }
                         while (tokens[i][0] !== ')') {
                             addCurrentToken();
@@ -103,7 +106,44 @@
                 addToResult();
             }
         }
-        return result;
+        var final = [];
+        function clearParen() {
+            var parens = document.getElementsByClassName('code-PAR');
+            for (var j = 0; j < parens.length; j++) {
+                parens[j].classList.remove('code-PAR-highlight');
+            }
+        }
+        function highlightParen(e) {
+            var paren = e.target.id;
+            App.get(paren).classList.add('code-PAR-highlight');
+            App.get(vm.parenMap[paren]).classList.add('code-PAR-highlight');
+        }
+        var parenStack = [];
+        for (var i = 0; i < result.length; i++) {
+            if (Array.isArray(result[i])) {
+                var props = {};
+                var on = result[i][0];
+                var type = result[i][1];
+                if (type === 'PAR') {
+                    props.onmouseenter = highlightParen;
+                    props.onmouseleave = clearParen;
+                    var id = App.uniqueId();
+                    props.id = id;
+                    if (on === '(') {
+                        parenStack.push(id);
+                    }
+                    if (on === ')') {
+                        var top = parenStack.pop();
+                        vm.parenMap[top] = id;
+                        vm.parenMap[id] = top;
+                    }
+                }
+                final.push(toCodeToken(on, type, props));
+            } else {
+                final.push(result[i]);
+            }
+        }
+        return final;
     }
 
     vm.toDisplay = function (code, putId, hide) {
@@ -165,6 +205,7 @@ var Holstep = (function () {
     vm.conjecture = null;
 
     function oninit() {
+        HolstepCode.parenMap = {};
         vm.conjecture = null;
         API.get('holstep/conjecture/' + m.route.param('id'), function (data) {
             vm.conjecture = TO.conjecture(data);

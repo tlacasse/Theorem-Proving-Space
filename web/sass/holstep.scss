@@ -66,6 +66,11 @@
     .code-SYM {
         color: #05f459;
     }
+
+    .code-PAR-highlight {
+        color: $c-link-active;
+        cursor: pointer;
+    }
 }
 
 .holstep-code-area {
