@@ -1,1 +1,1 @@
-python ./src/web_api_server.py
+python ./src/web_server.py
