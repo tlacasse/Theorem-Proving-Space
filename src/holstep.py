@@ -40,7 +40,7 @@ def build_search_conjecture(query, order_by):
     query = query.replace("'", '').replace('\\', '').strip()
     queries = query.split(' ')
     queries = map(lambda s: "Name LIKE '%{}%'".format(s), queries)
-    queries = ' OR '.join(queries)
+    queries = ' AND '.join(queries)
     if (len(queries) > 0):
         queries = ' WHERE ' + queries
     queries += ' ORDER BY IsTraining DESC, ' + order_by
