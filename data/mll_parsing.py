@@ -7,7 +7,7 @@ def main():
         stuff = Stuff(db)
         for p in os.listdir('../mmlfull'):
             fname = p
-            print('=== ' + fname)
+            print(fname)
             if fname == 'lopban_7.miz':
                 # this one causes problems because no ending 'end;'
                 continue
@@ -59,7 +59,6 @@ class Reader:
         self.store = ''
         self.done = False
 
-        print(header)
         self.stuff.THEOREM_ID += 1
         sql = ('INSERT INTO Theorem (Id, ArticleId, Type, Header, HasProof)'
                 + " VALUES ({}, {}, '{}', '{}', {})".format(
