@@ -1,7 +1,7 @@
 import flask
 import glob
 
-from data import HolStep, PageResults
+from data import HolStep, MLL, PageResults
 
 app = flask.Flask('API')
 app.config['DEBUG'] = True
@@ -10,6 +10,7 @@ class _STATE:
     
     def __init__(self):
         self.holstep_pages = PageResults(19)
+        self.mll_pages = PageResults(19)
 
 STATE = _STATE()
 
@@ -29,6 +30,8 @@ def content_script():
 def content_icon():
     return flask.send_file('web/favicon.ico')
     
+### HOLSTEP
+
 @app.route('/api/holstep/search/q/<string:query>', methods=['GET'])
 def holstep_search(query):
     sort_by = flask.request.args.get('sort')
@@ -54,5 +57,27 @@ def holstep_search_info():
 def holstep_conjecture_get(i):
     with HolStep() as db:
         return flask.jsonify(db.execute_single('SELECT * FROM Conjecture WHERE Id={}'.format(i)))
+    
+### MLL
+        
+@app.route('/api/mll/search/q/<string:query>', methods=['GET'])
+def mll_search(query):
+    query = MLL.build_search_conjecture(query)
+    with MLL() as db:
+        results = db.execute_many(query)
+        STATE.mll_pages.update_search(results)
+        return mll_search_page(0)
+    
+@app.route('/api/mll/search/all', methods=['GET'])
+def mll_search_all():
+    return mll_search('')
+    
+@app.route('/api/mll/search/page/<int:page>', methods=['GET'])
+def mll_search_page(page):
+    return flask.jsonify(STATE.mll_pages.fetch_page(page))
+
+@app.route('/api/mll/search/info', methods=['GET'])
+def mll_search_info():
+    return flask.jsonify([len(STATE.mll_pages.results), STATE.mll_pages.pages])
     
 app.run()

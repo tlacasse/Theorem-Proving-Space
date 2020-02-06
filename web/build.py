@@ -18,6 +18,7 @@ def main():
             , 'views/holstep.js'
             , 'views/holstepsearch.js'
             , 'views/info.js'
+            , 'views/mllsearch.js'
             , 'views/navbar.js'
             , 'root.js'
             ]

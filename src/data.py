@@ -53,6 +53,29 @@ class HolStep(DatabaseAccess):
         queries += ' ORDER BY IsTraining DESC, ' + order_by
         return 'SELECT Id, IsTraining, Name FROM Conjecture' + queries
     
+class MLL(DatabaseAccess):
+    
+    def __init__(self, path='data/mll.db'):
+        super().__init__(path)
+    
+    @staticmethod
+    def build_search_conjecture(query):
+        select = 'SELECT A.Name, T.Id, T.Type, T.Statement '
+        select += 'FROM Theorem AS T '
+        select += 'INNER JOIN Article AS A '
+        select += 'ON T.ArticleId = A.Id '
+        select += 'WHERE HasProof = 1 '
+        select += "AND Statement != '' "
+        select += 'AND '
+        
+        query = query.replace("'", '').replace('\\', '').strip()
+        queries = query.split(' ')
+        queries = map(lambda s: "T.Statement LIKE '%{}%'".format(s), queries)
+        queries = ' AND '.join(queries)
+        queries += ' ORDER BY T.Id'
+
+        return select + queries
+    
 class PageResults:
     
     def __init__(self, count_per_page):
@@ -67,4 +90,3 @@ class PageResults:
     def fetch_page(self, page):
         size = self.count_per_page
         return self.results[size * page : size * (page + 1)]
-

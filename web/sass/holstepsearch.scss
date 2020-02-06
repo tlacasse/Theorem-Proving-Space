@@ -114,16 +114,22 @@ table.holstep-info {
 
 #holstep-search-results {
     width: 100%;
+    max-width: 100%;
     border-bottom: $border-width groove $c-border;
     border-collapse: collapse;
+    table-layout: fixed;
 
     tr {
         width: 100%;
+        max-width: 100%;
+        overflow: hidden;
 
         td, th {
             font-size: 1.2em;
             padding-left: 1em;
             border: 1px solid $c-border;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
         th {

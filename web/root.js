@@ -25,6 +25,7 @@ m.route(root, '/info', {
     '/info': splitView(Info),
     '/holstep': splitView(HolstepSearch),
     '/holstep/view/:id': splitView(Holstep),
+    '/mll': splitView(MLLSearch),
 });
 
 m.mount(document.getElementById('message-box'), MessageBox);
