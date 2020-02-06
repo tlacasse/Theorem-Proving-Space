@@ -45,7 +45,7 @@ class Stuff:
         self.execute(sql)
         
 def escape(text):
-    return text.replace("'", "''").strip()
+    return text.replace("'", "''")
 
 def as_boolean(boolean):
     return '1' if boolean else '0'
@@ -89,11 +89,8 @@ class BasicReader(Reader):
         if line.startswith('begin'):
             self.done = True
         else:
-            if self.store != '':
-                self.store += ' '
-            self.store += line.strip()
-            if self.store != '' and self.store[-1] == ';':
-                self.save_store()
+            self.store = line
+            self.save_store()
     
 class SingleReader(Reader):
     
@@ -102,12 +99,10 @@ class SingleReader(Reader):
         self.done = self.header[-1] == ';'
     
     def read(self, line):
-        if self.store != '':
-            self.store += ' '
-        self.store += line.strip()
+        self.store = line
         if self.store != '' and self.store[-1] == ';':
-            self.save_store()
             self.done = True
+        self.save_store()
     
 class TheoremReader(Reader):
     
@@ -124,18 +119,15 @@ class TheoremReader(Reader):
             if line.strip() == 'proof' and not self.in_proof:
                 self.save_store()
                 self.in_proof = True  
-                self.store = line.strip()
+                self.store = line
                 self.save_store()
                 self._update_theorem()
             else:
-                if (self.store != ''):
-                    self.store += ' '
+                self.store = line
                 if (self.statement != ''):
                     self.statement += ' '
-                self.store += line.strip()
                 self.statement += line.strip()
-                if self.store != '' and self.store[-1] == ';':
-                    self.save_store()
+                self.save_store()
         self.prev = line
         
     def save_store(self):
