@@ -1,9 +1,7 @@
 import flask
 import glob
-import math
 
-import holstep
-from holstep import HolStep
+from data import HolStep, PageResults
 
 app = flask.Flask('API')
 app.config['DEBUG'] = True
@@ -11,17 +9,7 @@ app.config['DEBUG'] = True
 class _STATE:
     
     def __init__(self):
-        self.holstep_search_results = []
-        self.holstep_search_pages = 1
-        self.HOLSTEP_SEARCH_PERPAGE = 19
-        
-    def update_holstep_search(self, results):
-        self.holstep_search_results = results
-        self.holstep_search_pages = math.ceil(len(results) / self.HOLSTEP_SEARCH_PERPAGE)
-        
-    def fetch_holstep_search_page(self, page):
-        size = self.HOLSTEP_SEARCH_PERPAGE
-        return self.holstep_search_results[size * page : size * (page + 1)]
+        self.holstep_pages = PageResults(19)
 
 STATE = _STATE()
 
@@ -44,10 +32,10 @@ def content_icon():
 @app.route('/api/holstep/search/q/<string:query>', methods=['GET'])
 def holstep_search(query):
     sort_by = flask.request.args.get('sort')
-    query = holstep.build_search_conjecture(query, sort_by)
+    query = HolStep.build_search_conjecture(query, sort_by)
     with HolStep() as db:
         results = db.execute_many(query)
-        STATE.update_holstep_search(results)
+        STATE.holstep_pages.update_search(results)
         return holstep_search_page(0)
     
 @app.route('/api/holstep/search/all', methods=['GET'])
@@ -56,11 +44,11 @@ def holstep_search_all():
     
 @app.route('/api/holstep/search/page/<int:page>', methods=['GET'])
 def holstep_search_page(page):
-    return flask.jsonify(STATE.fetch_holstep_search_page(page))
+    return flask.jsonify(STATE.holstep_pages.fetch_page(page))
 
 @app.route('/api/holstep/search/info', methods=['GET'])
 def holstep_search_info():
-    return flask.jsonify([len(STATE.holstep_search_results), STATE.holstep_search_pages])
+    return flask.jsonify([len(STATE.holstep_pages.results), STATE.holstep_pages.pages])
 
 @app.route('/api/holstep/conjecture/<int:i>', methods=['GET'])
 def holstep_conjecture_get(i):
