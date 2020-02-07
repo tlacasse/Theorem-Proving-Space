@@ -1,5 +1,6 @@
 import sqlite3
 import math
+import re
 from sqlite3 import DatabaseError
 
 class DatabaseAccess:
@@ -90,3 +91,92 @@ class PageResults:
     def fetch_page(self, page):
         size = self.count_per_page
         return self.results[size * page : size * (page + 1)]
+
+class HolstepToken:
+    
+    def __init__(self, token, kind):
+        self.token = token
+        self.kind = kind
+  
+class HolstepParser:
+    
+    def __init__(self):
+        pass
+    
+    def get_char_kind(self, char):
+        if re.search(r'[a-z0-9_]', char, re.IGNORECASE):
+            return 'VAR'
+        if re.search(r'[\s]', char, re.IGNORECASE):
+            return 'SPC'
+        if re.search(r'[\(\)]', char, re.IGNORECASE):
+            return 'PAR'
+        return 'SYM'
+    
+    def get_kind(self, token):
+        kind = self.get_char_kind(token[0])
+        if kind == 'VAR' and len(token) > 2:
+            return 'FUN'
+        return kind
+    
+    def parse(self, code):
+        tokenized = []
+        prevkind = ''
+        token = ''
+        for char in code:
+            kind = self.get_char_kind(char)
+            if kind != prevkind or char == '(' or char == ')':
+                if token != '':
+                    tokenized.append(HolstepToken(token, self.get_kind(token)))
+                token = ''
+            token += char
+            prevkind = kind
+        return tokenized
+    
+    def prettyprint(self, code):
+        tokens = self.parse(code)
+        result = []
+        indent = 0
+        
+        def size_of_next_parenth_block(i):
+            i += 1
+            count = 0;
+            while tokens[i].token != ')':
+                if tokens[i].token == '(':
+                    return 1000
+                if tokens[i].kind != 'SPC':
+                    count += 1
+                i += 1
+            return count
+        
+        def add_new_line():
+            result.append(HolstepToken('<br>', 'BRK'))
+            for j in range(indent):
+                result.append(HolstepToken('__', 'SPC'))
+        
+        i = 0
+        while i < len(tokens):
+            on = tokens[i]
+            def add_to_result():
+                result.append(tokens[i])
+            if on.kind == 'PAR':
+                if on.token == '(':
+                    if (size_of_next_parenth_block(i) <= 3):
+                        while tokens[i].token != ')':
+                            add_to_result()
+                            i += 1
+                        add_to_result()
+                    else:
+                        add_to_result()
+                        indent += 1
+                        add_new_line()
+                elif on.token == ')':
+                    indent -= 1
+                    add_new_line()
+                    add_to_result()
+                else:
+                    add_to_result()
+            else:
+                add_to_result()
+            i += 1
+            
+        return [(t.token, t.kind) for t in result]

@@ -1,7 +1,7 @@
 import flask
 import glob
 
-from data import HolStep, MLL, PageResults
+from data import HolStep, MLL, PageResults, HolstepParser
 
 app = flask.Flask('API')
 app.config['DEBUG'] = True
@@ -56,7 +56,10 @@ def holstep_search_info():
 @app.route('/api/holstep/conjecture/<int:i>', methods=['GET'])
 def holstep_conjecture_get(i):
     with HolStep() as db:
-        return flask.jsonify(db.execute_single('SELECT * FROM Conjecture WHERE Id={}'.format(i)))
+        conj = list(db.get_conjecture(i))
+        # 3 == text
+        conj[3] = HolstepParser().prettyprint(conj[3])
+        return flask.jsonify(conj)
     
 ### MLL
         
