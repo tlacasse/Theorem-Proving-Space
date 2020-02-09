@@ -1,4 +1,4 @@
-﻿var HolstepSearch = (function () {
+﻿var MizarSearch = (function () {
     "use strict";
     var vm = {};
 
@@ -7,20 +7,19 @@
     vm.countPages = null;
     vm.page = null;
     vm.results = null;
-    vm.sort = 'id';
 
     vm.hasData = false;
     vm.timeout = null;
 
     function search(query) {
-        query = query.replace(/[^._\w\d\s]/g, '');
-        var uri = 'holstep/search/q/' + query;
+        query = query.replace(/[^=\w\d\s]/g, '');
+        var uri = 'mizar/search/q/' + query;
         if (query === '') {
-            uri = 'holstep/search/all';
+            uri = 'mizar/search/all';
         }
-        API.pget(uri, { sort: vm.sort }, function (data) {
+        API.get(uri, function (data) {
             vm.results = data;
-            API.get('holstep/search/info', function (data) {
+            API.get('mizar/search/info', function (data) {
                 vm.countResults = data[0];
                 vm.countPages = data[1];
                 vm.page = 0;
@@ -41,13 +40,13 @@
     function nextPage(n) {
         vm.page += n;
         vm.page = clamp(vm.page, 0, vm.countPages - 1);
-        API.get('holstep/search/page/' + vm.page, function (data) {
+        API.get('mizar/search/page/' + vm.page, function (data) {
             vm.results = data;
         });
     }
 
-    function goToConjecture(id) {
-        m.route.set('/holstep/view/' + String(id));
+    function goToTheorem(id) {
+        m.route.set('/mizar/view/' + String(id));
     }
 
     /////////////////////////////////////////
@@ -64,15 +63,6 @@
                     delaySearch();
                 },
             }),
-            m('div', {
-                id: 'search-sort-swap',
-                onclick: function (e) {
-                    var isId = vm.sort === 'id';
-                    vm.sort = isId ? 'name' : 'id';
-                    e.target.innerText = isId ? 'SORT: NAME' : 'SORT: ID';
-                    delaySearch();
-                },
-            }, vm.sort === 'id' ? 'SORT: ID' : 'SORT: NAME')
         ];
     }
 
@@ -87,6 +77,7 @@
 
         var show10 = displayIfEnoughPagesStyle(10);
         var show100 = displayIfEnoughPagesStyle(100);
+        var show1000 = displayIfEnoughPagesStyle(1000);
         return m('table', { class: 'search-info' },
             m('tr', [
                 m('td', { class: 'search-info-left' }, vm.countResults + ' results.'),
@@ -94,6 +85,10 @@
                     m('a', {
                         onclick: function () { nextPage(-100000); },
                     }, '1'),
+                    m('a', {
+                        style: show1000,
+                        onclick: function () { nextPage(-1000); },
+                    }, '<<<<'),
                     m('a', {
                         style: show100,
                         onclick: function () { nextPage(-100); },
@@ -118,6 +113,10 @@
                         onclick: function () { nextPage(100); },
                     }, '>>>'),
                     m('a', {
+                        style: show1000,
+                        onclick: function () { nextPage(1000); },
+                    }, '>>>>'),
+                    m('a', {
                         onclick: function () { nextPage(100000); },
                     }, vm.countPages),
                 ])
@@ -125,15 +124,16 @@
         );
     }
 
-    function conjectureToRecord(data) {
+    function theoremToRecord(data) {
         return m('tr', {
             onclick: function () {
-                goToConjecture(data[0]);
+                goToTheorem(data[1]);
             }
         }, [
-                m('td', data[1] === 1 ? 'train' : 'test'),
                 m('td', data[0]),
+                m('td', data[1]),
                 m('td', data[2]),
+                m('td', data[3]),
             ]);
     }
 
@@ -142,11 +142,12 @@
             return '';
         }
         var height = (vm.results.length + 1) * 5;
-        var records = vm.results.map(conjectureToRecord);
+        var records = vm.results.map(theoremToRecord);
         records.unshift(m('tr', [
+            m('th', { width: '10%' }, 'Article'),
+            m('th', { width: '10%' }, 'Id'),
             m('th', { width: '15%' }, 'Type'),
-            m('th', { width: '15%' }, 'Id'),
-            m('th', { width: '70%' }, 'Conjecture Name'),
+            m('th', { width: '65%' }, 'Theorem'),
         ]));
         return m('table', {
             height: String(height) + '%',
@@ -167,13 +168,10 @@
     return {
         view: view,
         search: search,
-        goToConjecture: goToConjecture,
+        goToTheorem: goToTheorem,
         nextPage: nextPage,
         getQuery: function () {
             return vm.query;
-        },
-        getSort: function () {
-            return vm.sort;
         },
         private: function () {
             return vm;

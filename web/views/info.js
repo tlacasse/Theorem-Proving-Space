@@ -29,11 +29,32 @@ var Info = (function () {
                     ]),
                 ]),
             ]),
+            m('br'),
+            m('br'),
+            m('div', { class: 'section-title' }, 'Mizar Mathematical Library'),
+            m('div', { class: 'hrule' }),
+            m('ul', [
+                m('li', m('a[href=http://www.mizar.org/library/]', 'Link')),
+                m('li', ['Theorem search.',
+                    m('ul', [
+                        m('li', 'Search bar at the top, spaces separate search parameters into different required substrings (ANDs).'),
+                        m('li', 'Theorems are not named as in Holstep, instead search conjecture text.'),
+                        m('li', 'Navigate through pages of results.'),
+                        m('li', 'Click each record to view more details about the theorem.'),
+                    ]),
+                ]),
+                m('li', ['View individual theorems.',
+                    m('ul', [
+                        m('li', 'Syntax coloring.'),
+                        m('li', 'Beginning highlighted text is the conjecture, after that, the proof.'),
+                    ]),
+                ]),
+            ]),
         ];
     }
 
     function view() {
-        return m('div', { class: 'content-area' }, content());
+        return m('div', { class: 'content-area overflow' }, content());
     }
 
     return {

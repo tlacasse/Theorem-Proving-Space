@@ -15,17 +15,19 @@ def main():
     scripts = [
               'mithril-v2.0.4.min.js'
             , 'functions.js'
-            , 'views/holstep.js'
             , 'views/holstepsearch.js'
+            , 'views/holstepview.js'
             , 'views/info.js'
+            , 'views/mizarsearch.js'
+            , 'views/mizarview.js'
             , 'views/navbar.js'
             , 'root.js'
             ]
     
     styles = [
               '_css/main.css'
-            , '_css/holstep.css'
-            , '_css/holstepsearch.css'
+            , '_css/search.css'
+            , '_css/view.css'
             ]
 
     append = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')

@@ -28,6 +28,10 @@ function clamp(x, min, max) {
     return x;
 }
 
+String.prototype.replaceAll = function (search, replacement) {
+    return this.split(search).join(replacement);
+};
+
 var API = {};
 
 API._get = function (url, success, block, params) {
@@ -70,6 +74,14 @@ TO.conjecture = function (data) {
         name: data[2],
         text: data[3],
         tokens: data[4],
+    };
+}
+
+TO.theorem = function (data) {
+    return {
+        article: data[0],
+        id: data[1],
+        type: data[2],
     };
 }
 

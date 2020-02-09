@@ -1,61 +1,30 @@
 ﻿@import "vars";
 
-$data-split-ratio: $split-ratio * 1.2;
-
-$width-left: $data-split-ratio * 100%;
-$width-right: (1 - $data-split-ratio) * 100%;
-
-#holstep-content-left, #holstep-content-right {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    border: $border-width groove $c-border;
-}
-
-#holstep-content-left {
-    left: 0;
-    width: $width-left;
-    overflow-y: scroll;
-}
-
-#holstep-content-right {
-    left: $width-left;
-    width: $width-right;
-}
-
-.color-training {
-    background-color: #350264;
-}
-
-.color-testing {
-    background-color: #014f65;
-}
-
 $top-height: 7%;
 
-.holstep-topbox, .holstep-botbox, .holstep-midbox {
+.search-topbox, .search-botbox, .search-midbox {
     width: 100%;
     position: absolute;
 }
 
-.holstep-topbox {
+.search-topbox {
     height: $top-height;
 }
 
-.holstep-midbox {
+.search-midbox {
     top: $top-height;
     height: $top-height;
     background-color: $c-dark-bg;
 }
 
-.holstep-botbox {
+.search-botbox {
     top: $top-height * 2;
     height: 100% - $top-height - $top-height;
 }
 
 $search-bar-width: 87%;
 
-#holstep-search {
+#search-bar {
     position: absolute;
     left: 0px;
     top: 0px;
@@ -66,7 +35,7 @@ $search-bar-width: 87%;
     font-size: 2 * $font-size;
 }
 
-#holstep-sort-swap {
+#search-sort-swap {
     position: absolute;
     right: 0px;
     top: 0px;
@@ -80,12 +49,12 @@ $search-bar-width: 87%;
     border-bottom: $border-width groove $c-border;
 }
 
-#holstep-sort-swap:hover {
+#search-sort-swap:hover {
     cursor: pointer;
     background-color: $c-border;
 }
 
-table.holstep-info {
+table.search-info {
     width: 100%;
     height: 100%;
 
@@ -99,31 +68,37 @@ table.holstep-info {
     }
 }
 
-.holstep-info-left {
+.search-info-left {
     text-align: left;
     padding-left: 4em;
     width: 30%;
 }
 
-.holstep-info-right {
+.search-info-right {
     a, span {
         padding: 0.25em 0.5em 0.25em 0.5em;
         border: $border-width groove $c-border;
     }
 }
 
-#holstep-search-results {
+#search-results {
     width: 100%;
+    max-width: 100%;
     border-bottom: $border-width groove $c-border;
     border-collapse: collapse;
+    table-layout: fixed;
 
     tr {
         width: 100%;
+        max-width: 100%;
+        overflow: hidden;
 
         td, th {
             font-size: 1.2em;
             padding-left: 1em;
             border: 1px solid $c-border;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
         th {

@@ -111,6 +111,8 @@ bld
 
 # theorem proving
 holstep
-data/holstep.db
+mmlfull
+mizar
+data/*.db
 _build
 _css
