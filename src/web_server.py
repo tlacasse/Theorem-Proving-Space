@@ -1,7 +1,7 @@
 import flask
 import glob
 
-from data import HolStep, Mizar, PageResults, HolstepParser, MizarParser
+from data import Holstep, Mizar, PageResults, HolstepParser, MizarParser
 
 app = flask.Flask('API')
 app.config['DEBUG'] = True
@@ -37,8 +37,8 @@ def content_icon():
 @app.route('/api/holstep/search/q/<string:query>', methods=['GET'])
 def holstep_search(query):
     sort_by = flask.request.args.get('sort')
-    query = HolStep.build_search_conjecture(query, sort_by)
-    with HolStep() as db:
+    query = Holstep.build_search_conjecture(query, sort_by)
+    with Holstep() as db:
         results = db.execute_many(query)
         STATE.holstep_pages.update_search(results)
         return holstep_search_page(0)
@@ -57,7 +57,7 @@ def holstep_search_info():
 
 @app.route('/api/holstep/conjecture/<int:i>', methods=['GET'])
 def holstep_conjecture_get(i):
-    with HolStep() as db:
+    with Holstep() as db:
         conj = list(db.get_conjecture(i))
         # 3 == text
         conj[3] = HolstepParser().prettyprint(conj[3])

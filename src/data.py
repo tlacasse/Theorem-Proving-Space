@@ -32,7 +32,7 @@ class DatabaseAccess:
         print(query)
         return list(self.cursor.execute(query))
 
-class HolStep(DatabaseAccess):
+class Holstep(DatabaseAccess):
     
     def __init__(self, path='data/holstep.db'):
         super().__init__(path)
