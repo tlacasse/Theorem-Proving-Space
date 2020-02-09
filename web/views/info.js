@@ -50,6 +50,13 @@ var Info = (function () {
                     ]),
                 ]),
             ]),
+            m('br'),
+            m('br'),
+            m('div', { class: 'section-title' }, 'Clustering'),
+            m('div', { class: 'hrule' }),
+            m('ul', [
+                m('li', 'Reduce dataset to a smaller related subset.'),
+            ]),
         ];
     }
 

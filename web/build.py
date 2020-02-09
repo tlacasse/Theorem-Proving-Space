@@ -14,7 +14,9 @@ def main():
     
     scripts = [
               'mithril-v2.0.4.min.js'
+            , 'd3.min.js'
             , 'functions.js'
+            , 'views/cluster.js'
             , 'views/holstepsearch.js'
             , 'views/holstepview.js'
             , 'views/info.js'
