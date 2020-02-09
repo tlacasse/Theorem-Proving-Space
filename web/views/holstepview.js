@@ -74,7 +74,7 @@
             ])),
             m('div', { class: 'hrule' }),
             m('br'),
-            m('div', { class: 'holstep-code-area' }, formatCode(vm.conjecture.text)),
+            m('div', { class: 'view-code-area' }, formatCode(vm.conjecture.text)),
         ]);
     }
 

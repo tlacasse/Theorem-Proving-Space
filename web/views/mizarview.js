@@ -46,7 +46,7 @@
             m('div', { class: 'section-title' }, desc),
             m('div', { class: 'hrule' }),
             m('br'),
-            m('div', { class: 'holstep-code-area' }, formatCode(vm.proof)),
+            m('div', { class: 'view-code-area' }, formatCode(vm.proof)),
         ]);
     }
 

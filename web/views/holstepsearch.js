@@ -56,7 +56,7 @@
         return [
             m('input', {
                 type: 'text',
-                id: 'holstep-search',
+                id: 'search-bar',
                 placeholder: 'search',
                 value: vm.query,
                 onkeyup: function (e) {
@@ -65,7 +65,7 @@
                 },
             }),
             m('div', {
-                id: 'holstep-sort-swap',
+                id: 'search-sort-swap',
                 onclick: function (e) {
                     var isId = vm.sort === 'id';
                     vm.sort = isId ? 'name' : 'id';
@@ -87,10 +87,10 @@
 
         var show10 = displayIfEnoughPagesStyle(10);
         var show100 = displayIfEnoughPagesStyle(100);
-        return m('table', { class: 'holstep-info' },
+        return m('table', { class: 'search-info' },
             m('tr', [
-                m('td', { class: 'holstep-info-left' }, vm.countResults + ' results.'),
-                m('td', { class: 'holstep-info-right' }, [
+                m('td', { class: 'search-info-left' }, vm.countResults + ' results.'),
+                m('td', { class: 'search-info-right' }, [
                     m('a', {
                         onclick: function () { nextPage(-100000); },
                     }, '1'),
@@ -150,15 +150,15 @@
         ]));
         return m('table', {
             height: String(height) + '%',
-            id: 'holstep-search-results',
+            id: 'search-results',
         }, records);
     }
 
     function view() {
         return [
-            m('div', { class: 'holstep-topbox' }, topBox()),
-            m('div', { class: 'holstep-topbox holstep-midbox' }, midBox()),
-            m('div', { class: 'holstep-botbox' }, botBox()),
+            m('div', { class: 'search-topbox' }, topBox()),
+            m('div', { class: 'search-topbox search-midbox' }, midBox()),
+            m('div', { class: 'search-botbox' }, botBox()),
         ];
     }
 

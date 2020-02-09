@@ -26,8 +26,8 @@ def main():
     
     styles = [
               '_css/main.css'
-            , '_css/holstep.css'
-            , '_css/holstepsearch.css'
+            , '_css/search.css'
+            , '_css/view.css'
             ]
 
     append = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
