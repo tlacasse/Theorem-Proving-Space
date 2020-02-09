@@ -14,6 +14,7 @@ def main():
     
     scripts = [
               'mithril-v2.0.4.min.js'
+            , 'plotly.min.js'
             , 'functions.js'
             , 'views/holstepsearch.js'
             , 'views/holstepview.js'
@@ -21,6 +22,7 @@ def main():
             , 'views/mizarsearch.js'
             , 'views/mizarview.js'
             , 'views/navbar.js'
+            , 'views/visuals.js'
             , 'root.js'
             ]
     
@@ -28,6 +30,7 @@ def main():
               '_css/main.css'
             , '_css/search.css'
             , '_css/view.css'
+            , '_css/visuals.css'
             ]
 
     append = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
