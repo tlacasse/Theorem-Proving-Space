@@ -15,11 +15,11 @@ def main():
     scripts = [
               'mithril-v2.0.4.min.js'
             , 'functions.js'
-            , 'views/holstep.js'
             , 'views/holstepsearch.js'
+            , 'views/holstepview.js'
             , 'views/info.js'
-            , 'views/mll.js'
-            , 'views/mllsearch.js'
+            , 'views/mizarsearch.js'
+            , 'views/mizarview.js'
             , 'views/navbar.js'
             , 'root.js'
             ]

@@ -12,7 +12,7 @@ var NavBar = (function () {
     vm.items = [
         it('Info', 'info'),
         it('Holstep', 'holstep'),
-        it('Mizar Lib', 'mll'),
+        it('Mizar Lib', 'mizar'),
     ];
 
     /////////////////////////////////////////

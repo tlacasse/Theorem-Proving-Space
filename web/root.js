@@ -24,9 +24,9 @@ function splitView(baseView) {
 m.route(root, '/info', {
     '/info': splitView(Info),
     '/holstep': splitView(HolstepSearch),
-    '/holstep/view/:id': splitView(Holstep),
-    '/mll': splitView(MLLSearch),
-    '/mll/view/:id': splitView(MLL),
+    '/holstep/view/:id': splitView(HolstepView),
+    '/mizar': splitView(MizarSearch),
+    '/mizar/view/:id': splitView(MizarView),
 });
 
 m.mount(document.getElementById('message-box'), MessageBox);

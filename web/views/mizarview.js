@@ -1,4 +1,4 @@
-﻿var MLL = (function () {
+﻿var MizarView = (function () {
     "use strict";
     var vm = {};
 
@@ -29,7 +29,7 @@
         vm.parenMap = {};
         vm.theorem = null;
         vm.proof = null;
-        API.get('mll/theorem/' + m.route.param('id'), function (data) {
+        API.get('mizar/theorem/' + m.route.param('id'), function (data) {
             vm.theorem = TO.theorem(data[0]);
             vm.proof = data[1];
         });

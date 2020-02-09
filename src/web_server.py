@@ -1,7 +1,7 @@
 import flask
 import glob
 
-from data import HolStep, MLL, PageResults, HolstepParser, MizarParser
+from data import HolStep, Mizar, PageResults, HolstepParser, MizarParser
 
 app = flask.Flask('API')
 app.config['DEBUG'] = True
@@ -12,7 +12,7 @@ class _STATE:
     
     def __init__(self):
         self.holstep_pages = PageResults(19)
-        self.mll_pages = PageResults(19)
+        self.mizar_pages = PageResults(19)
 
 STATE = _STATE()
 
@@ -63,31 +63,31 @@ def holstep_conjecture_get(i):
         conj[3] = HolstepParser().prettyprint(conj[3])
         return flask.jsonify(conj)
     
-### MLL
+### Mizar
         
-@app.route('/api/mll/search/q/<string:query>', methods=['GET'])
-def mll_search(query):
-    query = MLL.build_search_conjecture(query)
-    with MLL() as db:
+@app.route('/api/mizar/search/q/<string:query>', methods=['GET'])
+def mizar_search(query):
+    query = Mizar.build_search_theorem(query)
+    with Mizar() as db:
         results = db.execute_many(query)
-        STATE.mll_pages.update_search(results)
-        return mll_search_page(0)
+        STATE.mizar_pages.update_search(results)
+        return mizar_search_page(0)
     
-@app.route('/api/mll/search/all', methods=['GET'])
-def mll_search_all():
-    return mll_search('')
+@app.route('/api/mizar/search/all', methods=['GET'])
+def mizar_search_all():
+    return mizar_search('')
     
-@app.route('/api/mll/search/page/<int:page>', methods=['GET'])
-def mll_search_page(page):
-    return flask.jsonify(STATE.mll_pages.fetch_page(page))
+@app.route('/api/mizar/search/page/<int:page>', methods=['GET'])
+def mizar_search_page(page):
+    return flask.jsonify(STATE.mizar_pages.fetch_page(page))
 
-@app.route('/api/mll/search/info', methods=['GET'])
-def mll_search_info():
-    return flask.jsonify([len(STATE.mll_pages.results), STATE.mll_pages.pages])
+@app.route('/api/mizar/search/info', methods=['GET'])
+def mizar_search_info():
+    return flask.jsonify([len(STATE.mizar_pages.results), STATE.mizar_pages.pages])
 
-@app.route('/api/mll/theorem/<int:i>', methods=['GET'])
-def mll_theorem_get(i):
-    with MLL() as db:
+@app.route('/api/mizar/theorem/<int:i>', methods=['GET'])
+def mizar_theorem_get(i):
+    with Mizar() as db:
         theorem, proof = db.get_theorem_and_proof(i)
         proof = MizarParser().parse(proof)
         return flask.jsonify([theorem, proof])

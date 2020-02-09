@@ -1,4 +1,4 @@
-﻿var MLLSearch = (function () {
+﻿var MizarSearch = (function () {
     "use strict";
     var vm = {};
 
@@ -13,13 +13,13 @@
 
     function search(query) {
         query = query.replace(/[^=\w\d\s]/g, '');
-        var uri = 'mll/search/q/' + query;
+        var uri = 'mizar/search/q/' + query;
         if (query === '') {
-            uri = 'mll/search/all';
+            uri = 'mizar/search/all';
         }
         API.get(uri, function (data) {
             vm.results = data;
-            API.get('mll/search/info', function (data) {
+            API.get('mizar/search/info', function (data) {
                 vm.countResults = data[0];
                 vm.countPages = data[1];
                 vm.page = 0;
@@ -40,13 +40,13 @@
     function nextPage(n) {
         vm.page += n;
         vm.page = clamp(vm.page, 0, vm.countPages - 1);
-        API.get('mll/search/page/' + vm.page, function (data) {
+        API.get('mizar/search/page/' + vm.page, function (data) {
             vm.results = data;
         });
     }
 
     function goToTheorem(id) {
-        m.route.set('/mll/view/' + String(id));
+        m.route.set('/mizar/view/' + String(id));
     }
 
     /////////////////////////////////////////

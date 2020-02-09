@@ -54,9 +54,9 @@ class HolStep(DatabaseAccess):
         queries += ' ORDER BY IsTraining DESC, ' + order_by
         return 'SELECT Id, IsTraining, Name FROM Conjecture' + queries
     
-class MLL(DatabaseAccess):
+class Mizar(DatabaseAccess):
     
-    def __init__(self, path='data/mll.db'):
+    def __init__(self, path='data/mizar.db'):
         super().__init__(path)
     
     def get_theorem_and_proof(self, i):
@@ -73,7 +73,7 @@ class MLL(DatabaseAccess):
         return theorem, proof
 
     @staticmethod
-    def build_search_conjecture(query):
+    def build_search_theorem(query):
         select = 'SELECT A.Name, T.Id, T.Type, T.Statement '
         select += 'FROM Theorem AS T '
         select += 'INNER JOIN Article AS A '

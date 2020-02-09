@@ -1,4 +1,4 @@
-﻿var Holstep = (function () {
+﻿var HolstepView = (function () {
     "use strict";
     var vm = {};
 
