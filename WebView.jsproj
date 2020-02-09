@@ -80,9 +80,11 @@
     <Content Include="web\sass\holstepsearch.scss" />
     <Content Include="web\sass\main.scss" />
     <Content Include="web\sass\vars.scss" />
+    <Content Include="web\views\mll.js" />
     <Content Include="web\views\holstep.js" />
     <Content Include="web\views\holstepsearch.js" />
     <Content Include="web\views\info.js" />
+    <Content Include="web\views\mllsearch.js" />
     <Content Include="web\views\navbar.js" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).targets" />

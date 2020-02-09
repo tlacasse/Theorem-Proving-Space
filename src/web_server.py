@@ -1,10 +1,12 @@
 import flask
 import glob
 
-from data import HolStep, MLL, PageResults, HolstepParser
+from data import HolStep, MLL, PageResults, HolstepParser, MizarParser
 
 app = flask.Flask('API')
 app.config['DEBUG'] = True
+# this prevents spaces in json being removed somehow
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 
 class _STATE:
     
@@ -82,5 +84,12 @@ def mll_search_page(page):
 @app.route('/api/mll/search/info', methods=['GET'])
 def mll_search_info():
     return flask.jsonify([len(STATE.mll_pages.results), STATE.mll_pages.pages])
+
+@app.route('/api/mll/theorem/<int:i>', methods=['GET'])
+def mll_theorem_get(i):
+    with MLL() as db:
+        theorem, proof = db.get_theorem_and_proof(i)
+        proof = MizarParser().parse(proof)
+        return flask.jsonify([theorem, proof])
     
 app.run()

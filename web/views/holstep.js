@@ -12,7 +12,7 @@
         }
         var classes = 'code-' + type;
         props.class = classes;
-        return m('span', props, token.replace(' ', '_'));
+        return m('span', props, token.replaceAll(' ', nbsp()));
     }
 
     function formatCode(tokens) {

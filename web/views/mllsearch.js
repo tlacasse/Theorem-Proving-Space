@@ -46,6 +46,7 @@
     }
 
     function goToTheorem(id) {
+        m.route.set('/mll/view/' + String(id));
     }
 
     /////////////////////////////////////////
