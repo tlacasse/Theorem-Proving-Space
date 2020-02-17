@@ -143,6 +143,7 @@ class HolstepParser:
                 token = ''
             token += char
             prevkind = kind
+        tokenized.append(HolstepToken(token, self.get_kind(token)))
         return tokenized
     
     def prettyprint(self, code):
