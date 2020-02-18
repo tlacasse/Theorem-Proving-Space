@@ -1,7 +1,9 @@
 import flask
 import glob
 
-from data import Holstep, Mizar, PageResults, HolstepParser, MizarParser
+from holstep import Holstep, HolstepParser
+from mizar import Mizar, MizarParser
+from data import PageResults
 
 app = flask.Flask('API')
 app.config['DEBUG'] = True
