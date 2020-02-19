@@ -14,6 +14,7 @@ var NavBar = (function () {
         it('Holstep', 'holstep'),
         it('Mizar Lib', 'mizar'),
         it('Clustering', 'cluster'),
+        it('TSNE', 'tsne'),
     ];
 
     /////////////////////////////////////////

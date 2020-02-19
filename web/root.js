@@ -28,6 +28,7 @@ m.route(root, '/info', {
     '/mizar': splitView(MizarSearch),
     '/mizar/view/:id': splitView(MizarView),
     '/cluster': splitView(Cluster),
+    '/tsne': splitView(TSNE),
 });
 
 m.mount(document.getElementById('message-box'), MessageBox);

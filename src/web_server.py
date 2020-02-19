@@ -1,5 +1,8 @@
 import flask
 import glob
+import numpy as np
+
+import cluster
 
 from holstep import Holstep, HolstepParser
 from mizar import Mizar, MizarParser
@@ -93,5 +96,17 @@ def mizar_theorem_get(i):
         theorem, proof = db.get_theorem_and_proof(i)
         proof = MizarParser().parse(proof)
         return flask.jsonify([theorem, proof])
+    
+### Clustering
+        
+@app.route('/api/cluster/data', methods=['GET'])
+def cluster_data():
+    data = cluster.get_all_conjectures()
+    data = cluster.get_random_subset(data, 100)
+    return flask.jsonify(cluster.build_data(data, cluster.link_if_similar_length))
+
+@app.route('/api/tsne/data', methods=['GET'])
+def tsne_data():
+    return flask.jsonify(np.load('data/tsne2.npy').tolist())
     
 app.run()

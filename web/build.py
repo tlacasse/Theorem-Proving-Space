@@ -14,7 +14,7 @@ def main():
     
     scripts = [
               'mithril-v2.0.4.min.js'
-            , 'd3.min.js'
+            , 'plotly.min.js'
             , 'functions.js'
             , 'views/cluster.js'
             , 'views/holstepsearch.js'
@@ -23,6 +23,7 @@ def main():
             , 'views/mizarsearch.js'
             , 'views/mizarview.js'
             , 'views/navbar.js'
+            , 'views/tsne.js'
             , 'root.js'
             ]
     

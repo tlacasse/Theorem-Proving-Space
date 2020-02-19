@@ -1,5 +1,6 @@
 import sqlite3
 import math
+import pickle
 from sqlite3 import DatabaseError
 
 class DatabaseAccess:
@@ -53,3 +54,11 @@ class PageResults:
     def fetch_page(self, page):
         size = self.count_per_page
         return self.results[size * page : size * (page + 1)]
+    
+def dump_data(filename, obj):
+    with open(filename, 'wb') as file:
+        pickle.dump(obj, file)
+
+def load_data(filename):
+    with open(filename, 'rb') as file:
+        return pickle.load(file)
