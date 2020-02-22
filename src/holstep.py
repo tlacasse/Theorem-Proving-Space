@@ -6,6 +6,10 @@ class Holstep(DatabaseAccess):
     def __init__(self, path='data/holstep.db'):
         super().__init__(path)
         self.TEST_ID_START = 10000
+        
+    @classmethod
+    def Setup(cls):
+        return cls(path='../../data/holstep.db')
     
     def get_conjecture(self, i, train=True):
         if not train:
