@@ -113,6 +113,7 @@ bld
 holstep
 mmlfull
 mizar
-data/*.db
+data
+notes
 _build
 _css

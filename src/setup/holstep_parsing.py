@@ -1,6 +1,26 @@
 import os
 import sqlite3
 
+def main():
+    counters = Counters()       
+    read_folder('test', False, counters)
+    read_folder('train', True, counters)
+    
+def read_folder(name, is_train, counters):
+    db = sqlite3.connect('../../data/holstep.db')
+    
+    try:
+        for p in os.listdir('../../holstep/' + name):
+            cid = p
+            print(cid)
+            p = os.path.join('..', '..', 'holstep', name, p)
+            with open(p, 'r') as file:
+                reader = LineReader(db, int(cid), is_train, counters)
+                for line in file:
+                    reader.read(line)
+    finally:    
+        db.close()
+
 class LineType:
     
     def __init__(self, table):
@@ -133,21 +153,4 @@ class LineReader:
         # escape
         return text.replace("'", "''").strip()
 
-def read_folder(name, is_train, counters):
-    db = sqlite3.connect('holstep.db')
-    
-    try:
-        for p in os.listdir('../holstep/' + name):
-            cid = p
-            print(cid)
-            p = os.path.join('..', 'holstep', name, p)
-            with open(p, 'r') as file:
-                reader = LineReader(db, int(cid), is_train, counters)
-                for line in file:
-                    reader.read(line)
-    finally:    
-        db.close()
-
-counters = Counters()       
-read_folder('test', False, counters)
-read_folder('train', True, counters)
+main()
