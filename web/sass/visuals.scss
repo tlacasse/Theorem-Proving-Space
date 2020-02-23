@@ -1,1 +1,18 @@
-﻿
+﻿@import "vars";
+
+.visuals-dropdown {
+    z-index: 100;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    text-align: center;
+    font-size: $font-size;
+    padding: 0.3em;
+    background-color: $c-accent-bg;
+    border: $border-width groove $c-border;
+}
+
+.visuals-dropdown:hover {
+    cursor: pointer;
+    color: $c-link-active;
+}

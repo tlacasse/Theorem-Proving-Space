@@ -1,5 +1,6 @@
 import flask
 import glob
+import numpy as np
 
 from holstep import Holstep, HolstepParser
 from mizar import Mizar, MizarParser
@@ -93,5 +94,14 @@ def mizar_theorem_get(i):
         theorem, proof = db.get_theorem_and_proof(i)
         proof = MizarParser().parse(proof)
         return flask.jsonify([theorem, proof])
+    
+### Visualization
+
+@app.route('/api/visuals/data/<string:file>', methods=['GET'])
+def visuals_data(file):
+    if (file is None or file == '' or file == 'none'):
+        raise Exception('Visualization data file not specified.')
+    file = 'data/{}.npy'.format(file)
+    return flask.jsonify(np.load(file).tolist())
     
 app.run()
