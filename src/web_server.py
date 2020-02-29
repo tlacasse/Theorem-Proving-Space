@@ -16,6 +16,7 @@ class _STATE:
     def __init__(self):
         self.holstep_pages = PageResults(19)
         self.mizar_pages = PageResults(19)
+        self.holstep_conjecture_ids = np.load('data/holstep_conjecture_ids.npy')
 
 STATE = _STATE()
 
@@ -102,6 +103,11 @@ def visuals_data(file):
     if (file is None or file == '' or file == 'none'):
         raise Exception('Visualization data file not specified.')
     file = 'data/{}.npy'.format(file)
-    return flask.jsonify(np.load(file).tolist())
+    data = np.load(file).tolist()
+    
+    for i, point in enumerate(data):
+        point.insert(0, int(STATE.holstep_conjecture_ids[i]))
+        
+    return flask.jsonify(data)
     
 app.run()

@@ -4,26 +4,24 @@
 
     vm.data = null;
 
-    vm.visual = 'none';
+    vm.EMPTY_VISUAL = JSON.parse('{"file": "none"}');
+    vm.visual = vm.EMPTY_VISUAL;
 
     vm.plotLayout = {
+        hovermode: 'closest',
         margin: {
             l: 0,
             r: 0,
             b: 0,
             t: 0,
-        }
+        },
     };
 
     function loadData() {
-        if (vm.visual !== 'none') {
-            API.get('visuals/data/' + vm.visual, function (data) {
+        if (vm.visual.file !== 'none') {
+            API.get('visuals/data/' + vm.visual.file, function (data) {
                 vm.data = data;
-                if (vm.visual.charAt(vm.visual.length - 2) === '3') {
-                    createGraph(true);
-                } else {
-                    createGraph(false);
-                }
+                createGraph();
             });
         } else {
             App.get('visuals-container').innerHTML = '';
@@ -34,10 +32,11 @@
         return vm.data.map(x => x[n]);
     }
 
-    function createGraph(threeDim) {
+    function createGraph() {
         var points = {
-            x: getDim(0),
-            y: getDim(1),
+            text: getDim(0),
+            x: getDim(1),
+            y: getDim(2),
             mode: 'markers',
             marker: {
                 symbol: 'circle',
@@ -48,21 +47,28 @@
                 },
                 opacity: 1,
             },
-            type: 'scatter',
         };
 
-        if (threeDim) {
-            points.z = getDim(2);
+        if (vm.visual.actualDim === 3) {
+            points.z = getDim(3);
             points.type = 'scatter3d';
+            points.hoverinfo = 'x+y+z+text';
         } else {
-            points.type = 'scatter';
+            if (vm.visual.dim > vm.visual.actualDim) {
+                points.z = getDim(2).map(_ => 0);
+                points.type = 'scatter3d';
+                points.hoverinfo = 'x+y+text';
+            } else {
+                points.type = 'scatter';
+                points.hoverinfo = 'x+y+text';
+            }
         }
 
         Plotly.newPlot('visuals-container', [points], vm.plotLayout);
     }
 
     function oninit() {
-        vm.visual = 'none';
+        vm.visual = vm.EMPTY_VISUAL;
     }
 
     /////////////////////////////////////////
@@ -81,13 +87,14 @@
         return m('select', {
             class: 'visuals-dropdown',
             onchange: function (e) {
-                vm.visual = e.target.value;
+                vm.visual = JSON.parse(e.target.value);
                 loadData();
             }
         }, [
                 buildDropdownOption('none', 'SELECT'),
-                buildDropdownOption('holstepview_tsne_2d', 'Holstep - TSNE 2D'),
-                buildDropdownOption('holstepview_tsne_3d', 'Holstep - TSNE 3D'),
+                buildDropdownOption('{"file": "holstepview_tsne_2d", "dim": 2, "actualDim": 2}', 'Holstep - tSNE 2D'),
+                buildDropdownOption('{"file": "holstepview_tsne_2d", "dim": 3, "actualDim": 2}', 'Holstep - tSNE 2D in 3D'),
+                buildDropdownOption('{"file": "holstepview_tsne_3d", "dim": 3, "actualDim": 3}', 'Holstep - tSNE 3D'),
             ]);
     }
 
