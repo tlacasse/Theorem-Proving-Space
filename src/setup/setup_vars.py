@@ -3,10 +3,9 @@
 # to be considered as a dimension in the conjecture position
 HOLSTEP_STEPUSAGE_LOWER_BOUND = 20
 
-# used to check if we should calculate the metric
-HOLSTEP_METRIC_NOT_SET = 50000
+# not set value, this multiplied by HOLSTEP_METRIC_MAX, with overflow in uint16,
+# will wrap around to a value greater than HOLSTEP_METRIC_MAX.
+HOLSTEP_METRIC_BUILD_NOT_SET = -0.001
 
-# subtract each metric from this value
-# so closest conjectures have metric 0
-# and unrelated conjectures have maximum distance
-HOLSTEP_METRIC_MAX = 908
+# maximum distance between conjectures
+HOLSTEP_METRIC_MAX = 65000

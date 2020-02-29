@@ -8,7 +8,7 @@ def main():
 def reduce_to_dimension(dim):
     dists = np.load('../../data/holstepview_metric.npy')
 
-    tsne = TSNE(n_components=dim, verbose=1, metric='precomputed')
+    tsne = TSNE(n_components=dim, perplexity=40, verbose=1, metric='precomputed')
     tsne_results = tsne.fit_transform(dists)
     
     tsne_results = np.array(tsne_results)
