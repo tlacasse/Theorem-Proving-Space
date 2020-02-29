@@ -65,6 +65,10 @@
         }
 
         Plotly.newPlot('visuals-container', [points], vm.plotLayout);
+
+        App.get('visuals-container').on('plotly_click', function (data) {
+            HolstepSearch.goToConjecture(data.points[0].text);
+        });
     }
 
     function oninit() {
