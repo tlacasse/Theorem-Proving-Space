@@ -5,7 +5,7 @@ def main():
     db = sqlite3.connect('mll.db')
     try:
         stuff = Stuff(db)
-        for p in os.listdir('../mmlfull'):
+        for p in os.listdir('../../mmlfull'):
             fname = p
             print(fname)
             if fname == 'lopban_7.miz':
@@ -16,7 +16,7 @@ def main():
             sql = ("INSERT INTO Article (Id, Name) VALUES ({}, '{}')"
                    .format(stuff.ARTICLE_ID, fname[:-4]))
             db.execute(sql)
-            p = os.path.join('..', 'mmlfull', fname)
+            p = os.path.join('..', '..', 'mmlfull', fname)
             with open(p, 'r') as file:
                 read_file(fname, file.readlines(), stuff)
         db.commit()

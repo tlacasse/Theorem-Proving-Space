@@ -1,0 +1,6 @@
+CREATE TABLE Dependency (
+    Id     INTEGER PRIMARY KEY ON CONFLICT FAIL AUTOINCREMENT,
+    Name   VARCHAR,
+    Text   VARCHAR,
+    Tokens VARCHAR
+);

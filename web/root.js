@@ -27,6 +27,7 @@ m.route(root, '/info', {
     '/holstep/view/:id': splitView(HolstepView),
     '/mizar': splitView(MizarSearch),
     '/mizar/view/:id': splitView(MizarView),
+    '/visuals': splitView(Visuals),
 });
 
 m.mount(document.getElementById('message-box'), MessageBox);

@@ -1,7 +1,6 @@
-CREATE TABLE Dependency (
+CREATE TABLE ConjectureStep (
     Id           INTEGER PRIMARY KEY ON CONFLICT FAIL AUTOINCREMENT,
     ConjectureId INTEGER REFERENCES Conjecture (Id),
-    Name         VARCHAR,
-    Text         VARCHAR,
-    Tokens       VARCHAR
+    StepId       INTEGER REFERENCES Step (Id),
+    IsUseful     BOOLEAN
 );

@@ -13,6 +13,7 @@ var NavBar = (function () {
         it('Info', 'info'),
         it('Holstep', 'holstep'),
         it('Mizar Lib', 'mizar'),
+        it('Visualization', 'visuals'),
     ];
 
     /////////////////////////////////////////

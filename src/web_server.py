@@ -1,7 +1,10 @@
 import flask
 import glob
+import numpy as np
 
-from data import Holstep, Mizar, PageResults, HolstepParser, MizarParser
+from holstep import Holstep, HolstepParser
+from mizar import Mizar, MizarParser
+from data import PageResults
 
 app = flask.Flask('API')
 app.config['DEBUG'] = True
@@ -13,6 +16,7 @@ class _STATE:
     def __init__(self):
         self.holstep_pages = PageResults(19)
         self.mizar_pages = PageResults(19)
+        self.holstep_conjecture_ids = np.load('data/holstep_conjecture_ids.npy')
 
 STATE = _STATE()
 
@@ -91,5 +95,19 @@ def mizar_theorem_get(i):
         theorem, proof = db.get_theorem_and_proof(i)
         proof = MizarParser().parse(proof)
         return flask.jsonify([theorem, proof])
+    
+### Visualization
+
+@app.route('/api/visuals/data/<string:file>', methods=['GET'])
+def visuals_data(file):
+    if (file is None or file == '' or file == 'none'):
+        raise Exception('Visualization data file not specified.')
+    file = 'data/{}.npy'.format(file)
+    data = np.load(file).tolist()
+    
+    for i, point in enumerate(data):
+        point.insert(0, int(STATE.holstep_conjecture_ids[i]))
+        
+    return flask.jsonify(data)
     
 app.run()
