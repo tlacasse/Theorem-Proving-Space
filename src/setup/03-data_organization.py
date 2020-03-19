@@ -17,6 +17,12 @@ HOLSTEP_METRIC_BUILD_NOT_SET = -0.001
 # maximum distance between conjectures
 HOLSTEP_METRIC_MAX = 65000
 
+# subset boundaries of the 2d holstep tnse data
+SUBSET_X_MIN = 9
+SUBSET_X_MAX = 63
+SUBSET_Y_MIN = -55
+SUBSET_Y_MAX = -2
+
 def main():
     steps = []
     # comment out to limit which steps are executed
@@ -26,6 +32,7 @@ def main():
     steps.append(STEP_holstepview_metric_fix)
     steps.append(STEP_holstepview_tsne)
     steps.append(STEP_holstepview_premise_identifiers)
+    steps.append(STEP_subset_list)
     for step in steps:
         print()
         print(step)
@@ -164,6 +171,27 @@ def STEP_holstepview_tsne():
     apply_tsne(inpath, outpath, 2)
     apply_tsne(inpath, outpath, 3)
     
+def STEP_subset_list():
+    tsne = np.load('../../data/holstepview_tsne_2d.npy')
+    vbetween = np.vectorize(between)
+    subset_x = vbetween(tsne[:, 0], SUBSET_X_MIN, SUBSET_X_MAX) 
+    subset_y = vbetween(tsne[:, 1], SUBSET_Y_MIN, SUBSET_Y_MAX)
+    subset_compl = [i for i in range(tsne.shape[0]) if not (subset_x[i] and subset_y[i])]
+    
+    # reverse so early deleted indices do not affect later ones
+    subset_compl = sorted(subset_compl)[::-1]
+    
+    print(subset_compl)
+    print(len(subset_compl))
+    subset_compl = np.array(subset_compl)
+    
+    ids = np.load('../../data/holstep_conjecture_ids.npy')
+    ids = np.delete(ids, subset_compl, axis=0)
+    
+    print(list(ids))
+    print(ids.shape)
+    np.save('../../data/subset_conjecture_ids.npy', ids)
+    
 ###############################################################################
         
 def load_holstepview_coords():
@@ -177,5 +205,8 @@ def apply_tsne(inpath, outpath, dim):
     
     tsne_results = np.array(tsne_results)
     np.save(outpath.format(dim), tsne_results)
+    
+def between(x, a, b):
+    return x >= a and x <= b
 
 main()
