@@ -9,6 +9,7 @@ from data import dump_data, load_data
 # steps need to be used at least this many times
 # to be considered as a dimension in the conjecture position
 HOLSTEP_STEPUSAGE_LOWER_BOUND = 20
+SUBSET_STEPUSAGE_LOWER_BOUND = 10
 
 # not set value, this multiplied by HOLSTEP_METRIC_MAX, with overflow in uint16,
 # will wrap around to a value greater than HOLSTEP_METRIC_MAX.
@@ -33,6 +34,15 @@ def main():
     steps.append(STEP_holstepview_metric_fix)
     steps.append(STEP_holstepview_tsne)
     steps.append(STEP_subset_list)
+    steps.append(STEP_subset_premise_identifiers)
+    steps.append(STEP_subset_conjecture_coordinates)
+    steps.append(STEP_subset_zero_premise_conjectures)
+    steps.append(STEP_subset_list_without_zero_premises)
+    steps.append(STEP_subset_premise_identifiers)
+    steps.append(STEP_subset_conjecture_coordinates)
+    steps.append(STEP_subset_metric_base)
+    steps.append(STEP_subset_metric_fix)
+    steps.append(STEP_subset_tsne)
     for step in steps:
         print()
         print(step)
@@ -71,6 +81,39 @@ def STEP_holstepview_tsne():
     apply_tsne(inpath, outpath, 2)
     apply_tsne(inpath, outpath, 3)
     
+def STEP_subset_list():
+    build_subset_list(additional_deletions=None)
+    
+def STEP_subset_premise_identifiers():
+    build_premise_identifiers('subset', SUBSET_STEPUSAGE_LOWER_BOUND)
+    
+def STEP_subset_conjecture_coordinates():
+    build_conjecture_coordinates('subset')
+    
+def STEP_subset_zero_premise_conjectures():
+    coords = np.load('../../data/subset_conjecture_coords.npy')
+    counts = [np.sum(np.abs(c)) for c in coords]
+    zeros = [i for i in range(len(counts)) if counts[i] == 0]
+    zeros = np.array(zeros)
+    print(zeros)
+    print(zeros.shape)
+    np.save('../../data/subset_zero_conjectures.npy', zeros)
+    
+def STEP_subset_list_without_zero_premises():
+    zeros = np.load('../../data/subset_zero_conjectures.npy')
+    build_subset_list(additional_deletions=zeros)
+    
+def STEP_subset_metric_base():
+    build_metric('subset')
+    
+def STEP_subset_metric_fix():
+    fix_metric('subset')
+    
+def STEP_subset_tsne():
+    inpath = '../../data/subset_metric.npy'
+    outpath = '../../data/subset_tsne_{}d.npy'
+    apply_tsne(inpath, outpath, 2)
+    apply_tsne(inpath, outpath, 3)
     
 ###############################################################################
 
@@ -115,6 +158,31 @@ def build_conjecture_coordinates(prefix):
     np.save('../../data/{}_conjecture_coords.npy'.format(prefix), positions)
     print(positions)
     print(positions.shape)
+    
+def build_subset_list(additional_deletions=None):
+    tsne = np.load('../../data/holstepview_tsne_2d.npy')
+    vbetween = np.vectorize(between)
+    subset_x = vbetween(tsne[:, 0], SUBSET_X_MIN, SUBSET_X_MAX) 
+    subset_y = vbetween(tsne[:, 1], SUBSET_Y_MIN, SUBSET_Y_MAX)
+    subset_compl = [i for i in range(tsne.shape[0]) if not (subset_x[i] and subset_y[i])]
+    
+    # reverse so early deleted indices do not affect later ones
+    subset_compl = sorted(subset_compl)[::-1]
+    
+    print(subset_compl)
+    print(len(subset_compl))
+    subset_compl = np.array(subset_compl)
+    
+    ids = np.load('../../data/holstep_conjecture_ids.npy')
+    ids = np.delete(ids, subset_compl, axis=0)
+    
+    if additional_deletions is not None:
+        ids = np.delete(ids, additional_deletions, axis=0)
+    
+    print(list(ids))
+    print(ids.shape)
+    np.save('../../data/subset_conjecture_ids.npy', ids)
+    
 def build_metric(prefix):
     def load_coords():
         return np.load('../../data/{}_conjecture_coords.npy'.format(prefix))
