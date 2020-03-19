@@ -21,11 +21,11 @@ def main():
     steps = []
     # comment out to limit which steps are executed
     steps.append(STEP_holstep_conjecture_ids)
-    steps.append(STEP_holstepview_identifiers)
     steps.append(STEP_holstepview_conjecture_coordinates)
     steps.append(STEP_holstepview_metric_first)
     steps.append(STEP_holstepview_metric_fix)
     steps.append(STEP_holstepview_tsne)
+    steps.append(STEP_holstepview_premise_identifiers)
     for step in steps:
         print()
         print(step)
@@ -45,7 +45,7 @@ def STEP_holstep_conjecture_ids():
         print(ids)
         print(ids.shape)
      
-def STEP_holstepview_identifiers():
+def STEP_holstepview_premise_identifiers():
     with Holstep.Setup() as db:
         sql = 'SELECT StepId FROM ConjectureStep '
         sql += 'GROUP BY StepId HAVING COUNT(StepId) >= {} '.format(HOLSTEP_STEPUSAGE_LOWER_BOUND)
@@ -54,18 +54,18 @@ def STEP_holstepview_identifiers():
         steps = [a[0] for a in steps]
         
         id_to_step = np.array(steps)
-        np.save('../../data/holstepview_id_to_step.npy', id_to_step)
+        np.save('../../data/holstepview_premise_id_to_step.npy', id_to_step)
         print(id_to_step)
         
         step_to_id = {}
         for i, x in enumerate(steps):
             step_to_id[x] = i
-        dump_data('../../data/holstepview_step_to_id.data', step_to_id)
+        dump_data('../../data/holstepview_premise_step_to_id.data', step_to_id)
         print(step_to_id)
 
 def STEP_holstepview_conjecture_coordinates():
-    id_to_step = np.load('../../data/holstepview_id_to_step.npy')
-    step_to_id = load_data('../../data/holstepview_step_to_id.data')
+    id_to_step = np.load('../../data/holstepview_premise_id_to_step.npy')
+    step_to_id = load_data('../../data/holstepview_premise_step_to_id.data')
     conjectures = np.load('../../data/holstep_conjecture_ids.npy')
     
     positions = np.zeros((len(conjectures), len(id_to_step)), dtype=int)
