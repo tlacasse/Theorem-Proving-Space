@@ -99,6 +99,9 @@
                 buildDropdownOption('{"file": "holstepview_tsne_2d", "dim": 2, "actualDim": 2}', 'Holstep - tSNE 2D'),
                 buildDropdownOption('{"file": "holstepview_tsne_2d", "dim": 3, "actualDim": 2}', 'Holstep - tSNE 2D in 3D'),
                 buildDropdownOption('{"file": "holstepview_tsne_3d", "dim": 3, "actualDim": 3}', 'Holstep - tSNE 3D'),
+                buildDropdownOption('{"file": "subset_tsne_2d", "dim": 2, "actualDim": 2}', 'Subset - tSNE 2D'),
+                buildDropdownOption('{"file": "subset_tsne_2d", "dim": 3, "actualDim": 2}', 'Subset - tSNE 2D in 3D'),
+                buildDropdownOption('{"file": "subset_tsne_3d", "dim": 3, "actualDim": 3}', 'Subset - tSNE 3D'),
             ]);
     }
 
