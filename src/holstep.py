@@ -38,7 +38,11 @@ class HolstepToken:
     def __init__(self, token, kind):
         self.token = token
         self.kind = kind
-  
+        
+    def __repr__(self):
+        return '<"{}" : "{}">'.format(self.token, self.kind)
+
+# parse through "text" column
 class HolstepParser:
     
     def __init__(self):
@@ -122,3 +126,25 @@ class HolstepParser:
             i += 1
             
         return [(t.token, t.kind) for t in result]
+
+# parse through "tokens" column   
+class HolstepTokenizer:
+    
+    def __init__(self):
+        pass
+    
+    def get_token_kind(self, token):
+        if token[0] == 'c':
+            if token[1].isalpha():
+                return 'FUN'
+            else:
+                return 'OPR'
+        else:
+            if token[0].isalpha():
+                return 'VAR'
+            else:
+                return 'SYM'
+    
+    def parse(self, tokens):
+        tokens = tokens.split(' ')
+        return [HolstepToken(t, self.get_token_kind(t)) for t in tokens]
