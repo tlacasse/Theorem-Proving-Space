@@ -278,7 +278,8 @@ class HolstepTreeParser:
         else:
             if len(token) > 1 and token[1].isalpha():
                 # quantifiers
-                if (len(token) == 2 or token[2].isalpha()):
+                if len(token) == 2:
+                    print(self.latest_source)
                     raise Exception(token)
                 self._handle_quantifier(token)
             else:
@@ -289,8 +290,15 @@ class HolstepTreeParser:
         qnt = token[0]
         token = token[1:]
         self._handle_fun(qnt, kind='QNT')
-        var = token[0]
-        syms = token[1:]
+        
+        var = None
+        syms = None
+        if token[1].isalpha():
+            var = token[:2]
+            syms = token[2:]
+        else:
+            var = token[0]
+            syms = token[1:]
         self._handle_var(var, syms=syms)
         
     def _handle_word(self, token):

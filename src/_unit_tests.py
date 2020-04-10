@@ -10,7 +10,7 @@ def check(test, expr, expected, exp_vars=[], exp_varfuncs=[]):
 
     check_node(test, tree, expected)
     test.assertFalse(tree.has_FILL())
-    test.assertFalse(any([b for b in tree.unique_branching.keys() if b > 2]))
+    test.assertFalse(any([b > 2 for b in tree.unique_branching.keys()]))
     test.assertEqual(len(seqparser.parse(expr)), tree.node_count())
     
     test.assertEqual(len(parser.stack), 1)
@@ -139,6 +139,22 @@ class TestHolstepTreeParsing(unittest.TestCase):
                     ['f', ['g']],
                     ['x']
                     ]]]]]], exp_vars=['f', 'g', 'x'])
+            
+    def test_multichar_var(self):
+        check(self, '|- (!ul. (!k. (((k + (NUMERAL (BIT0 (BIT1 _0)))) <= (LENGTH ul)) ==> _0)))',
+              ['|-', 
+               ['!', ['ul', ['.']],
+                ['!', ['k', ['.']],
+                 ['==>',
+                  ['<=', 
+                   ['+',
+                    ['k'],
+                    ['NUMERAL', ['BIT0', ['BIT1', ['_0']]]]
+                    ],
+                   ['LENGTH', ['ul']]
+                   ],
+                  ['_0']
+                  ]]]] , exp_vars=['ul', 'k'])
 
 if __name__ == '__main__':
     unittest.main()
