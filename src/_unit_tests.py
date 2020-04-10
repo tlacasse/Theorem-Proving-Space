@@ -105,6 +105,40 @@ class TestHolstepTreeParsing(unittest.TestCase):
                 ],
                 ['x']
                 ]], exp_vars=['x'])
+            
+    def test_word_operation(self):
+        check(self, '|- (!n. ((n EXP (NUMERAL (BIT0 (BIT1 _0)))) = (n * n)))',
+              ['|-', 
+               ['!', ['n', ['.']],
+                ['=',
+                 ['EXP',
+                  ['n'],
+                  ['NUMERAL', ['BIT0', ['BIT1', ['_0']]]]
+                  ],
+                 ['*', ['n'], ['n']
+                 ]]]], exp_vars=['n'])
+            
+    def test_func_composition(self):
+        check(self, '|- ((!f. (!g. (!x. (((f o g) x) = (f (g x)))))) ==> (\\f. (!g. (!x. ((f o g) x)))))',
+              ['|-', 
+               ['==>',
+                ['!', ['f', ['.']],
+                 ['!', ['g', ['.']],
+                  ['!', ['x', ['.']],
+                   ['=', 
+                    ['o', 
+                     ['f', ['g']],
+                     ['x']
+                     ],
+                    ['f', ['g', ['x']]]
+                    ]]]],
+                ['\\', ['f', ['.']],
+                 ['!', ['g', ['.']],
+                  ['!', ['x', ['.']],
+                   ['o',
+                    ['f', ['g']],
+                    ['x']
+                    ]]]]]], exp_vars=['f', 'g', 'x'])
 
 if __name__ == '__main__':
     unittest.main()

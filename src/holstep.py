@@ -296,7 +296,7 @@ class HolstepTreeParser:
     def _handle_word(self, token):
         token, parens = self.split_end_parens(token)
         #self._handle_higher_order_fun(token)
-        if self.prevtoken.lstrip('(') in self.varfunclist:
+        if self.prevtoken is not None and self.prevtoken.lstrip('(') in self.varfunclist:
             # predicate on var
             self.stack[-1].consumefirstchild()
         if token in self.varlist:
@@ -309,6 +309,8 @@ class HolstepTreeParser:
         elif token[0] == '_' or token in ['T', 'F']:
             # constant ex: '_0' or 'T'
             self._handle_value(token)
+        elif token == 'o':
+            self._handle_operation(token)
         else:
             if len(token) == 1:
                 # assume var
@@ -338,8 +340,13 @@ class HolstepTreeParser:
             if var not in self.varfunclist:
                 self.varfunclist.append(var)
             varnode = HolstepTreeNode(HolstepToken(var, 'VFN'))
+        
         qnt = self.stack[-1]
-        qnt.children.append(varnode)
+        if qnt.value == 'o':
+            qnt.children[0].children.append(varnode)
+        else:
+            qnt.children.append(varnode)
+        
         if syms is not None:
             symsnode = HolstepTreeNode(HolstepToken(syms, 'DOT'))
             varnode.children.append(symsnode)
