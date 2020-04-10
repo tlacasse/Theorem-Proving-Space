@@ -297,4 +297,5 @@ def apply_pca(inpath, outpath, dim):
 def between(x, a, b):
     return x >= a and x <= b
 
-main()
+if __name__ == '__main__':
+    main()
