@@ -155,6 +155,17 @@ class TestHolstepTreeParsing(unittest.TestCase):
                    ],
                   ['_0']
                   ]]]] , exp_vars=['ul', 'k'])
+            
+    def test_genpvar_var(self):
+        check(self, '|- (!y1. (real_open (GSPEC (\GEN%PVAR%8085. (?y4. (SETSPEC GEN%PVAR%8085))))))',
+              ['|-',
+               ['!', ['y1', ['.']],
+                ['real_open',
+                 ['GSPEC', 
+                  ['\\', ['GEN%PVAR%8085', ['.']],
+                   ['?', ['y4', ['.']],
+                    ['SETSPEC', ['GEN%PVAR%8085']]
+                    ]]]]]], exp_vars=['y1', 'GEN%PVAR%8085', 'y4'])
 
 if __name__ == '__main__':
     unittest.main()

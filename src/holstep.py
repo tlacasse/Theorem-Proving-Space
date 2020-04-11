@@ -293,12 +293,11 @@ class HolstepTreeParser:
         
         var = None
         syms = None
-        if token[1].isalpha():
-            var = token[:2]
-            syms = token[2:]
-        else:
-            var = token[0]
-            syms = token[1:]
+        if token[-1] != '.':
+            print(self.latest_source)
+            raise Exception(token)
+        var = token[:-1]
+        syms = token[-1]
         self._handle_var(var, syms=syms)
         
     def _handle_word(self, token):
@@ -314,7 +313,7 @@ class HolstepTreeParser:
             # predicate
             self._handle_var(token)
             #self._handle_fun(token, kind='VFN')
-        elif token[0] == '_' or token in ['T', 'F']:
+        elif token[0] == '_' or token in ['T', 'F', 'pi']:
             # constant ex: '_0' or 'T'
             self._handle_value(token)
         elif token == 'o':
@@ -340,7 +339,7 @@ class HolstepTreeParser:
         
     def _handle_var(self, var, syms=None):
         varnode = None
-        if var.islower():
+        if var.islower() or self.is_genpvar(var):
             if var not in self.varlist:
                 self.varlist.append(var)
             varnode = HolstepTreeNode(HolstepToken(var, 'VAR'))
@@ -369,6 +368,9 @@ class HolstepTreeParser:
         
     def is_word(self, token):
         return token[0].isalpha() or token[0] == '_'
+    
+    def is_genpvar(self, token):
+        return token.startswith('GEN%PVAR')
     
     def split_end_parens(self, token):
         i = token.find(')')
