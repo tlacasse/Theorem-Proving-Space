@@ -302,7 +302,6 @@ class HolstepTreeParser:
         
     def _handle_word(self, token):
         token, parens = self.split_end_parens(token)
-        #self._handle_higher_order_fun(token)
         if self.prevtoken is not None and self.prevtoken.lstrip('(') in self.varfunclist:
             # predicate on var
             self.stack[-1].consumefirstchild()
@@ -361,10 +360,6 @@ class HolstepTreeParser:
     def _handle_value(self, token):
         node = HolstepTreeNode(HolstepToken(token, 'VAL'))
         self.stack[-1].children.append(node)
-        
-    def _handle_higher_order_fun(self, token):
-        if self.stack[-1].token.kind == 'FILL' and self.prevtoken[-1] == ')':
-            self._consume_child(self.stack[-1])
         
     def is_word(self, token):
         return token[0].isalpha() or token[0] == '_'
