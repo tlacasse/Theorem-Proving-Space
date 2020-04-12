@@ -178,7 +178,7 @@ class HolstepTreeNode:
         self.children = first.children + tail
         
     def printtree(self, indent=0):
-        print(('   ' * indent) + self.value)
+        print(('  ' * indent) + self.value)
         for c in self.children:
             c.printtree(indent=indent+1)
             
@@ -249,7 +249,7 @@ class HolstepTreeParser:
         self.stack = []
         self.latest_source = None
         self.prevtoken = None
-        self.constants = ['T', 'F', 'ldih_x']
+        self.constants = ['T', 'F', 'ldih_x', 'UNIV']
         
     def parse(self, tokens):
         self.latest_source = tokens
@@ -272,6 +272,10 @@ class HolstepTreeParser:
             self.prevtoken = token
         self.fix_tree(root)
         return root
+    
+    def fail(self, token):
+        print(self.latest_source)
+        raise Exception(token)
 
     def _handle_beginning_paren(self, token):
         # multiple '((((('
@@ -287,8 +291,7 @@ class HolstepTreeParser:
             if len(token) > 1 and token[1].isalpha():
                 # quantifiers
                 if len(token) == 2:
-                    print(self.latest_source)
-                    raise Exception(token)
+                    self.fail(token)
                 self._handle_quantifier(token)
             else:
                 # symbol func like '~'
@@ -302,8 +305,7 @@ class HolstepTreeParser:
         var = None
         syms = None
         if token[-1] != '.':
-            print(self.latest_source)
-            raise Exception(token)
+            self.fail(token)
         var = token[:-1]
         syms = token[-1]
         self._handle_var(var, syms=syms)
@@ -346,7 +348,12 @@ class HolstepTreeParser:
         self._handle_fun(token, kind='OPR')
             
     def _handle_fun(self, token, kind='FUN'):
+        dug_up_node = None
+        if self.stack[-1].value not in ['FILL', 'ROOT']:
+            dug_up_node = self.dig_up(self.stack[-1])
         self.stack[-1].settoken(HolstepToken(token, kind))
+        if dug_up_node is not None:
+            self.stack[-1].children.append(dug_up_node)
         
     def _handle_var(self, var, syms=None):
         varnode = None
@@ -388,6 +395,13 @@ class HolstepTreeParser:
             else:
                 return token[0].isalpha() and token[1].isdigit()
     
+    def dig_up(self, node):
+        if len(node.children) > 0:
+            self.fail(node)
+        dug_up_node = HolstepTreeNode(node.token)
+        node.settoken(HolstepToken('FILL', 'FILL'))
+        return dug_up_node
+
     def split_end_parens(self, token):
         i = token.find(')')
         if i == -1:

@@ -244,7 +244,24 @@ class TestHolstepTreeParsing(unittest.TestCase):
                   ['INSERT',
                    ['v1'],
                    ['INSERT', ['v2'], ['EMPTY']]
-                   ]]]]], exp_vars=['v1', 'v2'])     
+                   ]]]]], exp_vars=['v1', 'v2'])
+    
+    def test_varfunc_first_before_operation(self):
+        check(self, '|- ((E UNION ((v INSERT (w INSERT EMPTY)) INSERT EMPTY)) = E1)',
+              ['|-',
+               ['=',
+                ['UNION',
+                 ['E'],
+                 ['INSERT',
+                  ['INSERT', 
+                   ['v'],
+                   ['INSERT', ['w'], ['EMPTY']]
+                   ],
+                  ['EMPTY']
+                  ]
+                  ],
+                  ['E1']
+                  ]], exp_vars=['v', 'w'], exp_varfuncs=['E', 'E1']) 
 
 if __name__ == '__main__':
     unittest.main()
