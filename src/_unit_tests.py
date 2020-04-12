@@ -193,5 +193,24 @@ class TestHolstepTreeParsing(unittest.TestCase):
                            ]]]]]]]]]]]]
                            , exp_vars=['y1', 'y2', 'y3', 'y5', 'y6', 'GEN%PVAR%8085', 'y4'])
 
+    def test_constants(self):
+        check(self, '|- (!s. ((collinear s) = (?u. (?v. (s SUBSET ((hull affine) (u INSERT (v INSERT EMPTY))))))))',
+              ['|-',
+               ['!', ['s', ['.']],
+                ['=',
+                 ['collinear', ['s']],
+                 ['?', ['u', ['.']],
+                  ['?', ['v', ['.']],
+                   ['SUBSET',
+                    ['s'],
+                    ['hull',
+                     ['affine'],
+                     ['INSERT',
+                      ['u'],
+                      ['INSERT',
+                       ['v'],
+                       ['EMPTY']
+                       ]]]]]]]]], exp_vars=['s', 'u', 'v'])
+
 if __name__ == '__main__':
     unittest.main()

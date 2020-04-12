@@ -243,6 +243,7 @@ class HolstepTreeParser:
         self.stack = []
         self.latest_source = None
         self.prevtoken = None
+        self.constants = ['T', 'F']
         
     def parse(self, tokens):
         self.latest_source = tokens
@@ -313,9 +314,13 @@ class HolstepTreeParser:
             # predicate
             self._handle_var(token)
             #self._handle_fun(token, kind='VFN')
-        elif token[0] == '_' or token in ['T', 'F', 'pi']:
-            # constant ex: '_0' or 'T'
-            self._handle_value(token)
+        elif token[0] == '_' or parens is not None or token in self.constants:
+            if len(token) == 1 and not token in self.constants:
+                # assume var
+                self._handle_var(token)
+            else:
+                # constant ex: '_0' or 'T'
+                self._handle_value(token)
         elif token == 'o':
             self._handle_operation(token)
         else:
