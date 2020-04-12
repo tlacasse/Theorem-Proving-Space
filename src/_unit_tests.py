@@ -232,7 +232,19 @@ class TestHolstepTreeParsing(unittest.TestCase):
                     ]],
                  ['rh0']],
                 ['dih_x'],
-                ]]], exp_vars=[])          
+                ]]], exp_vars=['h0'])    
+            
+    def test_letternumber_var_unquantified(self):
+        check(self, '|- (~ (collinear ((vec (NUMERAL _0)) INSERT (v1 INSERT (v2 INSERT EMPTY)))))',
+              ['|-',
+               ['~',
+                ['collinear',
+                 ['INSERT',
+                  ['vec', ['NUMERAL', ['_0']]],
+                  ['INSERT',
+                   ['v1'],
+                   ['INSERT', ['v2'], ['EMPTY']]
+                   ]]]]], exp_vars=['v1', 'v2'])     
 
 if __name__ == '__main__':
     unittest.main()

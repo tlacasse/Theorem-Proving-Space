@@ -182,6 +182,12 @@ class HolstepTreeNode:
         for c in self.children:
             c.printtree(indent=indent+1)
             
+    def gettext(self):
+        if (len(self.children) > 0):
+            return self.value + ' ' + ' '.join([c.gettext() for c in self.children])
+        else:
+            return self.value
+            
     def to_list(self):
         result = []
         result.append(self.value)
@@ -315,7 +321,7 @@ class HolstepTreeParser:
             self._handle_var(token)
             #self._handle_fun(token, kind='VFN')
         elif token[0] == '_' or parens is not None or token in self.constants:
-            if len(token) == 1 and not token in self.constants:
+            if self.test_var(token) and not token in self.constants:
                 # assume var
                 self._handle_var(token)
             else:
@@ -324,7 +330,7 @@ class HolstepTreeParser:
         elif token == 'o':
             self._handle_operation(token)
         else:
-            if len(token) == 1:
+            if self.test_var(token):
                 # assume var
                 self._handle_var(token)
             else:
@@ -372,6 +378,15 @@ class HolstepTreeParser:
     
     def is_genpvar(self, token):
         return token.startswith('GEN%PVAR')
+    
+    def test_var(self, token):
+        if len(token) > 2:
+            return False
+        else:
+            if len(token) == 1:
+                return token[0].isalpha()
+            else:
+                return token[0].isalpha() and token[1].isdigit()
     
     def split_end_parens(self, token):
         i = token.find(')')
