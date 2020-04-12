@@ -156,16 +156,42 @@ class TestHolstepTreeParsing(unittest.TestCase):
                   ['_0']
                   ]]]] , exp_vars=['ul', 'k'])
             
-    def test_genpvar_var(self):
-        check(self, '|- (!y1. (real_open (GSPEC (\GEN%PVAR%8085. (?y4. (SETSPEC GEN%PVAR%8085))))))',
+    def test_genpvar_var_and_multi_arg(self):
+        check(self, '|- (!y1. (!y2. (!y3. (!y5. (!y6. (real_open (GSPEC (\\GEN%PVAR%8085. ' 
+                + '(?y4. (((SETSPEC GEN%PVAR%8085) (((real_lt (real_of_num (NUMERAL _0))) y4) ' 
+                + '/\\ ((real_lt (real_of_num (NUMERAL _0))) ((((((delta_y y1) y2) y3) y4) y5) y6)))) y4))))))))))',
               ['|-',
                ['!', ['y1', ['.']],
-                ['real_open',
-                 ['GSPEC', 
-                  ['\\', ['GEN%PVAR%8085', ['.']],
-                   ['?', ['y4', ['.']],
-                    ['SETSPEC', ['GEN%PVAR%8085']]
-                    ]]]]]], exp_vars=['y1', 'GEN%PVAR%8085', 'y4'])
+                ['!', ['y2', ['.']],
+                 ['!', ['y3', ['.']],
+                  ['!', ['y5', ['.']],
+                   ['!', ['y6', ['.']],
+                    ['real_open', 
+                     ['GSPEC',
+                      ['\\', ['GEN%PVAR%8085', ['.']],
+                       ['?', ['y4', ['.']],
+                        ['SETSPEC',
+                         ['GEN%PVAR%8085'],
+                         ['ARG', 
+                          ['/\\',
+                           ['real_lt', 
+                            ['real_of_num', ['NUMERAL', ['_0']]],
+                             ['y4']
+                           ],
+                           ['real_lt', 
+                            ['real_of_num', ['NUMERAL', ['_0']]],
+                            ['delta_y',
+                             ['y1'],
+                             ['ARG', 
+                              ['y2'],
+                              ['ARG',
+                               ['y3'],
+                               ['ARG',
+                                ['y4'],
+                                ['ARG', ['y5'], ['y6']]
+                                ]]]]]], ['y4']
+                           ]]]]]]]]]]]]
+                           , exp_vars=['y1', 'y2', 'y3', 'y5', 'y6', 'GEN%PVAR%8085', 'y4'])
 
 if __name__ == '__main__':
     unittest.main()

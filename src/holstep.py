@@ -206,7 +206,7 @@ class HolstepTreeNode:
     def node_count(self, is_inner=False):
         count = 0 if is_inner else 1
         for c in self.children:
-            count += 1 + c.node_count(is_inner=True)
+            count += (0 if c.value == 'ARG' else 1) + c.node_count(is_inner=True)
         return count
             
     def __repr__(self):
@@ -263,6 +263,7 @@ class HolstepTreeParser:
             else:
                 self._handle_operation(token)
             self.prevtoken = token
+        self.fix_tree(root)
         return root
 
     def _handle_beginning_paren(self, token):
@@ -373,3 +374,20 @@ class HolstepTreeParser:
             return (token, None)
         else:
             return (token[:i], token[i:])
+        
+    def fix_tree(self, root):
+        if len(root.children) > 2:
+            self.break_up_nonbinary(root)
+        for c in root.children:
+            self.fix_tree(c)
+            
+    def break_up_nonbinary(self, node):
+        children = node.children
+        node.children = []
+        for c in children[:-2]:
+            node.children.append(c)
+            chain = HolstepTreeNode(HolstepToken('ARG', 'ARG'))
+            node.children.append(chain)
+            node = chain
+        node.children.append(children[-2])
+        node.children.append(children[-1])
