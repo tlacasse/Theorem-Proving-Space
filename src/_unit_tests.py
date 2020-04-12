@@ -211,6 +211,28 @@ class TestHolstepTreeParsing(unittest.TestCase):
                        ['v'],
                        ['EMPTY']
                        ]]]]]]]]], exp_vars=['s', 'u', 'v'])
+            
+    def test_tbd(self):
+        check(self, '|- (ldih_x = ((mul6 ((scalar6 ((sub6 ((scalar6 unit6) h0)) ((scalar6 proj_y1) ' 
+                  + '((DECIMAL (NUMERAL (BIT1 (BIT0 (BIT1 _0))))) (NUMERAL (BIT0 (BIT1 (BIT0 (BIT1 _0)))' 
+                  + ')))))) rh0)) dih_x))',
+              ['|-',
+               ['=',
+                ['ldih_x'],
+                ['mul6',
+                 ['scalar6', 
+                  ['sub6',
+                   ['scalar6', ['unit6'], ['h0']],
+                   ['scalar6',
+                    ['proj_y1'],
+                    ['DECIMAL', 
+                     ['NUMERAL', ['BIT1', ['BIT0', ['BIT1', ['_0']]]]],
+                     ['NUMERAL', ['BIT0', ['BIT1', ['BIT0', ['BIT1', ['_0']]]]]]
+                    ]
+                    ]],
+                 ['rh0']],
+                ['dih_x'],
+                ]]], exp_vars=[])          
 
 if __name__ == '__main__':
     unittest.main()

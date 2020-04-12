@@ -243,7 +243,7 @@ class HolstepTreeParser:
         self.stack = []
         self.latest_source = None
         self.prevtoken = None
-        self.constants = ['T', 'F']
+        self.constants = ['T', 'F', 'ldih_x']
         
     def parse(self, tokens):
         self.latest_source = tokens
