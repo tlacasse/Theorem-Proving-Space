@@ -448,11 +448,13 @@ class HolstepTreeParser:
         if i == -1:
             return (token, None, None)
         else:
-            j = token.find(',')
+            syms = token[i:]
+            token = token[:i]
+            j = syms.find(',')
             if j == -1:
-                return (token[:i], token[i:], None)
+                return (token, syms, None)
             else:
-                return (token[:i], token[i:j], token[j:])
+                return (token, syms[:j], syms[j:])
         
     def fix_tree(self, root):
         if len(root.children) > 2:
