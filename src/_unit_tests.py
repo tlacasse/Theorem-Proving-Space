@@ -322,6 +322,23 @@ class TestHolstepTreeParsing(unittest.TestCase):
                 ['!', ['f', ["'"], ['.']],
                  ['=', ['f'], ['f', "'"]]
                  ]]], exp_vars=['f'])
+            
+    def test_named_premise_args_single(self):
+        check(self, "pf |- (test s)",
+              ['STEP',
+               [',', ['pf']],
+               ['|-', ['test', ['s']]]
+               ], exp_vars=['pf', 's'])
+            
+    def test_named_premise_args_many(self):
+        check(self, "pf, pg, ph |- (test s)",
+              ['STEP',
+               [',', 
+                ['pf'],
+                ['ARG', ['pg'], ['ph']]
+                ],
+               ['|-', ['test', ['s']]]
+               ], exp_vars=['pf', 'pg', 'ph', 's'])
      
 class TestHolstepParserSplitWord(unittest.TestCase):
 

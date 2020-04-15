@@ -263,7 +263,7 @@ class HolstepTreeParser:
         self.stack = []
         self.latest_source = None
         self.prevtoken = None
-        self.constants = ['T', 'F', 'ldih_x', 'UNIV', 'main_nonlinear_terminal_v11']
+        self.constants = ['T', 'F', 'ldih_x', 'UNIV']
         
     def parse(self, tokens):
         self.latest_source = tokens
@@ -279,6 +279,7 @@ class HolstepTreeParser:
             root.settoken(HolstepToken('STEP', 'STEP'))
             # fill for comma
             self._add_fill()
+            self.stack[-1].settoken(HolstepToken(',', 'COM'))
         
         for token in tokens:
             if token == '|-':
@@ -312,8 +313,6 @@ class HolstepTreeParser:
             # premise argument: "a, b, c |- stuff"
             if len(self.stack) != 2:
                 self.fail(self.stack)
-            # set comma node
-            self.stack[-1].settoken(HolstepToken(',', 'COM'))
             # remove comma node
             self.stack.pop() 
             # add |-
@@ -323,7 +322,7 @@ class HolstepTreeParser:
         else:
             # conjecture: "|- stuff"
             self._handle_fun('|-')
-
+            
     def _handle_beginning_paren(self, token):
         # multiple '((((('
         while token[0] == '(':
@@ -380,6 +379,9 @@ class HolstepTreeParser:
         elif not token[0].isalpha():
             # ex: '+)' as a value not operation
             self._handle_value(token)
+        elif parens is None and self.stack[-1].value == ',':
+            # named premise in list ex: "pf, pg |- ..."
+            self._handle_var(token)
         else:
             if self.test_var(token):
                 # assume var
