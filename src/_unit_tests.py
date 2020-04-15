@@ -262,6 +262,17 @@ class TestHolstepTreeParsing(unittest.TestCase):
                   ],
                   ['E1']
                   ]], exp_vars=['v', 'w'], exp_varfuncs=['E', 'E1']) 
+            
+    def test_deeper_varfunc_with_nochild_fill_stack(self):
+        check(self, '|- (!P. (test = ((P (NUMERAL (BIT1 _0))) /\ (P (NUMERAL (BIT0 (BIT1 _0)))))))',
+              ['|-',
+               ['!', ['P', ['.']],
+                ['=',
+                 ['test'],
+                 ['/\\',
+                  ['P', ['NUMERAL', ['BIT1', ['_0']]]],
+                  ['P', ['NUMERAL', ['BIT0', ['BIT1', ['_0']]]]],
+                  ]]]], exp_varfuncs=['P'])        
 
 if __name__ == '__main__':
     unittest.main()

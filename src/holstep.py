@@ -314,7 +314,8 @@ class HolstepTreeParser:
         token, parens = self.split_end_parens(token)
         if self.prevtoken is not None and self.prevtoken.lstrip('(') in self.varfunclist:
             # predicate on var
-            self.stack[-1].consumefirstchild()
+            if len(self.stack[-1].children) != 0:
+                self.stack[-1].consumefirstchild()
         if token in self.varlist:
             # var
             self._handle_var(token)
