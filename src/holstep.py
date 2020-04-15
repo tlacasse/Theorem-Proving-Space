@@ -398,12 +398,15 @@ class HolstepTreeParser:
         self._handle_fun(token, kind='OPR')
             
     def _handle_fun(self, token, kind='FUN'):
-        dug_up_node = None
-        if self.stack[-1].value not in ['FILL', 'ROOT']:
-            dug_up_node = self.dig_up(self.stack[-1])
-        self.stack[-1].settoken(HolstepToken(token, kind))
-        if dug_up_node is not None:
-            self.stack[-1].children.append(dug_up_node)
+        def _f(token):
+            dug_up_node = None
+            if self.stack[-1].value not in ['FILL', 'ROOT']:
+                dug_up_node = self.dig_up(self.stack[-1])
+            self.stack[-1].settoken(HolstepToken(token, kind))
+            if dug_up_node is not None:
+                self.stack[-1].children.append(dug_up_node)
+            return self.stack[-1]
+        self._check_apost(token, _f)
         
     def _handle_var(self, var_, syms=None):
         def _f(var):

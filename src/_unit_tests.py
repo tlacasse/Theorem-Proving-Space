@@ -343,6 +343,14 @@ class TestHolstepTreeParsing(unittest.TestCase):
     def test_apostrophe_on_value(self):
         check(self, "|- (MMs_v39 scs_4M6')",
               ['|-', ['MMs_v39', ['scs_4M6', ["'"]]]])         
+
+    def test_apostrophe_on_function(self):
+        check(self, "|- (nfgtrans' (test g))",
+              ['|-', 
+               ['nfgtrans',
+                ["'"],
+                ['test', ['g']]
+                ]], exp_vars=['g'])
      
 class TestHolstepParserSplitWord(unittest.TestCase):
 
