@@ -311,6 +311,17 @@ class TestHolstepTreeParsing(unittest.TestCase):
                  ['closed', ['s']],
                  ['T']
                  ]]], exp_vars=['s'])    
+            
+    def test_function_derivative(self):
+        check(self, "|- (((has_real_derivative f) f') \\/ (!f'. (f = f')))",
+              ['|-',
+               ['\\/',
+                ['has_real_derivative',
+                 ['f'],
+                 ['f', "'"]],
+                ['!', ['f', ["'"], ['.']],
+                 ['=', ['f'], ['f', "'"]]
+                 ]]], exp_vars=['f'])
      
 class TestHolstepParserSplitWord(unittest.TestCase):
 

@@ -237,15 +237,23 @@ class QuickHolstepSeqParser:
             token = token.replace('(', '').replace(')', '')
             if len(token) >= 2 and token[1].isalpha() and not token[0].isalpha():
                 tokens.append(token[0])
-                tokens.append(token[1])
-                token = token[2:]
-                if token != '':
-                    tokens.append(token)
+                if token[-1] == '.':
+                    self.append(tokens, token[1:-1])
+                    self.append(tokens, '.')
+                else:
+                    self.append(tokens, token)
             elif len(token) > 1 and token[-1] == ',':
-                tokens.append(token[:-1])
+                self.append(tokens, token[:-1])
             else:
-                tokens.append(token)
+                self.append(tokens, token)
         return tokens
+    
+    def append(self, tokens, token):
+        if (token[-1] == "'"):
+            tokens.append(token[:-1])
+            tokens.append("'")
+        else:
+            tokens.append(token)
     
 class HolstepTreeParser:
     
@@ -353,10 +361,10 @@ class HolstepTreeParser:
             # predicate on var
             if len(self.stack[-1].children) != 0:
                 self.stack[-1].consumefirstchild()
-        if token in self.varlist:
+        if token.rstrip("'") in self.varlist:
             # var
             self._handle_var(token)
-        elif token in self.varfunclist:
+        elif token.rstrip("'") in self.varfunclist:
             # predicate
             self._handle_var(token)
             #self._handle_fun(token, kind='VFN')
@@ -397,6 +405,11 @@ class HolstepTreeParser:
             self.stack[-1].children.append(dug_up_node)
         
     def _handle_var(self, var, syms=None):
+        apost = None
+        if var[-1] == "'":
+            apost = "'"
+            var = var[:-1]
+        
         varnode = None
         if var.islower() or self.is_genpvar(var):
             if var not in self.varlist:
@@ -413,10 +426,11 @@ class HolstepTreeParser:
         else:
             qnt.children.append(varnode)
         
-        if syms is not None:
-            symsnode = HolstepTreeNode(HolstepToken(syms, 'DOT'))
-            varnode.children.append(symsnode)
-  
+        for sym in [apost, syms]:
+            if sym is not None:
+                symnode = HolstepTreeNode(HolstepToken(sym, 'DOT'))
+                varnode.children.append(symnode)
+                
     def _handle_value(self, token):
         node = HolstepTreeNode(HolstepToken(token, 'VAL'))
         self.stack[-1].children.append(node)
@@ -428,6 +442,7 @@ class HolstepTreeParser:
         return token.startswith('GEN%PVAR')
     
     def test_var(self, token):
+        token = token.rstrip("'")
         if len(token) > 2:
             return False
         else:
