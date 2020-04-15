@@ -316,49 +316,42 @@ class TestHolstepParserSplitWord(unittest.TestCase):
 
     def test_just_word(self):
         token, parens, comma = parser.split_end_parens('test')
-        print((token, parens, comma))
         self.assertEquals(token, 'test')
         self.assertIsNone(parens)
         self.assertIsNone(comma)
         
     def test_word_and_paren(self):
         token, parens, comma = parser.split_end_parens('test)')
-        print((token, parens, comma))
         self.assertEquals(token, 'test')
         self.assertEquals(parens, ')')
         self.assertIsNone(comma)
         
     def test_word_and_many_parens(self):
         token, parens, comma = parser.split_end_parens('test)))')
-        print((token, parens, comma))
         self.assertEquals(token, 'test')
         self.assertEquals(parens, ')))')
         self.assertIsNone(comma)
         
     def test_word_and_paren_and_comma(self):
         token, parens, comma = parser.split_end_parens('test),')
-        print((token, parens, comma))
         self.assertEquals(token, 'test')
         self.assertEquals(parens, ')')
         self.assertEquals(comma, ',')
         
     def test_word_and_many_parens_and_comma(self):
         token, parens, comma = parser.split_end_parens('test))),')
-        print((token, parens, comma))
         self.assertEquals(token, 'test')
         self.assertEquals(parens, ')))')
         self.assertEquals(comma, ',')
         
     def test_comma_as_word(self):
         token, parens, comma = parser.split_end_parens(',)))')
-        print((token, parens, comma))
         self.assertEquals(token, ',')
         self.assertEquals(parens, ')))')
         self.assertIsNone(comma)
         
     def test_comma_as_word_with_comma(self):
         token, parens, comma = parser.split_end_parens(',))),')
-        print((token, parens, comma))
         self.assertEquals(token, ',')
         self.assertEquals(parens, ')))')
         self.assertEquals(comma, ',')
