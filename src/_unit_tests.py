@@ -301,6 +301,16 @@ class TestHolstepTreeParsing(unittest.TestCase):
                    ],
                   ['s']
                   ]]], exp_vars=['s', 't']) 
+        
+    def test_single_premise_list(self):
+        check(self, '(closed s) |- ((closed s) = T)',
+              ['STEP',
+               [',', ['closed', ['s']]],
+               ['|-',
+                ['=',
+                 ['closed', ['s']],
+                 ['T']
+                 ]]], exp_vars=['s'])    
 
 if __name__ == '__main__':
     unittest.main()

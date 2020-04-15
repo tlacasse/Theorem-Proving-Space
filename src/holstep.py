@@ -167,8 +167,6 @@ class HolstepTreeNode:
         self.unique_tokens = Counter()
         self.unique_branching = Counter()
         
-        self.ignore_nodes = ['ARG']
-        
     def settoken(self, token):
         self.token = token
         self.value = token.token
@@ -214,7 +212,7 @@ class HolstepTreeNode:
     def node_count(self, is_inner=False):
         count = 0 if is_inner else 1
         for c in self.children:
-            count += (0 if c.value in self.ignore_nodes else 1) + c.node_count(is_inner=True)
+            count += (0 if c.value == 'ARG' else 1) + c.node_count(is_inner=True)
         return count
             
     def __repr__(self):
@@ -229,19 +227,22 @@ class QuickHolstepSeqParser:
         pass
     
     def parse(self, tokens):
+        src = tokens
         tokensspl = tokens.split(' ')
         tokens = []
+        if not src.startswith('|-') :
+            tokens.append('STEP')
+            tokens.append(',')
         for token in tokensspl:
-            token = token.lstrip('(').rstrip(')')
+            token = token.replace('(', '').replace(')', '')
             if len(token) >= 2 and token[1].isalpha() and not token[0].isalpha():
                 tokens.append(token[0])
                 tokens.append(token[1])
                 token = token[2:]
                 if token != '':
                     tokens.append(token)
-            elif token[-1] == ',':
+            elif len(token) > 1 and token[-1] == ',':
                 tokens.append(token[:-1])
-                tokens.append(',')
             else:
                 tokens.append(token)
         return tokens
@@ -267,8 +268,6 @@ class HolstepTreeParser:
         
         if tokens[0] != '|-':
             # if premise argument: "a, b, c |- d"
-            if not any([t[-1] == ',' for t in tokens]):
-                self.fail('')
             root.settoken(HolstepToken('STEP', 'STEP'))
             # fill for comma
             self._add_fill()
@@ -301,11 +300,15 @@ class HolstepTreeParser:
         self.stack.append(node)
         
     def _handle_can_prove(self):
-        if self.stack[-1].value == ',':
+        if self.stack[0].value == 'STEP':
             # premise argument: "a, b, c |- stuff"
             if len(self.stack) != 2:
                 self.fail(self.stack)
-            self.stack.pop() # remove comma node
+            # set comma node
+            self.stack[-1].settoken(HolstepToken(',', 'COM'))
+            # remove comma node
+            self.stack.pop() 
+            # add |-
             node = HolstepTreeNode(HolstepToken('|-', 'FUN'))
             self.stack[0].children.append(node)
             self.stack.append(node)
@@ -381,8 +384,6 @@ class HolstepTreeParser:
                 if self.stack[-1].value == 'FILL':
                     self.stack[-1].consumefirstchild()
                 self.stack.pop()
-        if comma is not None:
-            self.stack[-1].settoken(HolstepToken(',', 'COM'))
                 
     def _handle_operation(self, token):
         self._handle_fun(token, kind='OPR')
