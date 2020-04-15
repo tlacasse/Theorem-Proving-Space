@@ -167,6 +167,8 @@ class HolstepTreeNode:
         self.unique_tokens = Counter()
         self.unique_branching = Counter()
         
+        self.ignore_nodes = ['ARG']
+        
     def settoken(self, token):
         self.token = token
         self.value = token.token
@@ -212,7 +214,7 @@ class HolstepTreeNode:
     def node_count(self, is_inner=False):
         count = 0 if is_inner else 1
         for c in self.children:
-            count += (0 if c.value == 'ARG' else 1) + c.node_count(is_inner=True)
+            count += (0 if c.value in self.ignore_nodes else 1) + c.node_count(is_inner=True)
         return count
             
     def __repr__(self):
@@ -237,6 +239,9 @@ class QuickHolstepSeqParser:
                 token = token[2:]
                 if token != '':
                     tokens.append(token)
+            elif token[-1] == ',':
+                tokens.append(token[:-1])
+                tokens.append(',')
             else:
                 tokens.append(token)
         return tokens
@@ -260,9 +265,17 @@ class HolstepTreeParser:
         root = HolstepTreeNode(HolstepToken('ROOT', 'ROOT'))
         self.stack = [root]
         
+        if tokens[0] != '|-':
+            # if premise argument: "a, b, c |- d"
+            if not any([t[-1] == ',' for t in tokens]):
+                self.fail('')
+            root.settoken(HolstepToken('STEP', 'STEP'))
+            # fill for comma
+            self._add_fill()
+        
         for token in tokens:
             if token == '|-':
-                self._handle_fun('|-')
+                self._handle_can_prove()
             elif token[0] == '(':
                 self._handle_beginning_paren(token)
             elif self.is_word(token) or token.find(')') >= 0:
@@ -270,19 +283,40 @@ class HolstepTreeParser:
             else:
                 self._handle_operation(token)
             self.prevtoken = token
+            
+        if len(self.stack) == 2 and self.stack[-1].value == '|-':
+            # leftover '|-'
+            self.stack.pop()
+        
         self.fix_tree(root)
         return root
     
     def fail(self, token):
         print(self.latest_source)
         raise Exception(token)
+        
+    def _add_fill(self):
+        node = HolstepTreeNode(HolstepToken('FILL', 'FILL'))
+        self.stack[-1].children.append(node)
+        self.stack.append(node)
+        
+    def _handle_can_prove(self):
+        if self.stack[-1].value == ',':
+            # premise argument: "a, b, c |- stuff"
+            if len(self.stack) != 2:
+                self.fail(self.stack)
+            self.stack.pop() # remove comma node
+            node = HolstepTreeNode(HolstepToken('|-', 'FUN'))
+            self.stack[0].children.append(node)
+            self.stack.append(node)
+        else:
+            # conjecture: "|- stuff"
+            self._handle_fun('|-')
 
     def _handle_beginning_paren(self, token):
         # multiple '((((('
         while token[0] == '(':
-            node = HolstepTreeNode(HolstepToken('FILL', 'FILL'))
-            self.stack[-1].children.append(node)
-            self.stack.append(node)
+            self._add_fill()
             token = token[1:]
         if self.is_word(token):
             # funcs or constants or vars
@@ -311,7 +345,7 @@ class HolstepTreeParser:
         self._handle_var(var, syms=syms)
         
     def _handle_word(self, token):
-        token, parens = self.split_end_parens(token)
+        token, parens, comma = self.split_end_parens(token)
         if self.prevtoken is not None and self.prevtoken.lstrip('(') in self.varfunclist:
             # predicate on var
             if len(self.stack[-1].children) != 0:
@@ -347,6 +381,8 @@ class HolstepTreeParser:
                 if self.stack[-1].value == 'FILL':
                     self.stack[-1].consumefirstchild()
                 self.stack.pop()
+        if comma is not None:
+            self.stack[-1].settoken(HolstepToken(',', 'COM'))
                 
     def _handle_operation(self, token):
         self._handle_fun(token, kind='OPR')
@@ -409,9 +445,13 @@ class HolstepTreeParser:
     def split_end_parens(self, token):
         i = token.find(')')
         if i == -1:
-            return (token, None)
+            return (token, None, None)
         else:
-            return (token[:i], token[i:])
+            j = token.find(',')
+            if j == -1:
+                return (token[:i], token[i:], None)
+            else:
+                return (token[:i], token[i:j], token[j:])
         
     def fix_tree(self, root):
         if len(root.children) > 2:

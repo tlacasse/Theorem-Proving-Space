@@ -276,6 +276,31 @@ class TestHolstepTreeParsing(unittest.TestCase):
 
     def test_op_as_term(self):
         check(self, '|- (monoidal +)', ['|-', ['monoidal', ['+']]])  
+        
+    def test_premise_list_and_conclusion(self):
+        check(self, '(!s. (test s)), ((test s) /\ (test s)), (test s) |- '
+                  + '((open_in ((subtopology euclidean) t)) s)',
+              ['STEP',
+               [',',
+                ['!', ['s', ['.']],
+                 ['test', ['s']]
+                 ],
+                ['ARG', 
+                 ['/\\',
+                  ['test', ['s']],
+                  ['test', ['s']]
+                  ],
+                 ['test', ['s']]
+                 ]
+                ],
+                ['|-',
+                 ['open_in', 
+                  ['subtopology', 
+                   ['euclidean'],
+                   ['t']
+                   ],
+                  ['s']
+                  ]]], exp_vars=['s', 't']) 
 
 if __name__ == '__main__':
     unittest.main()
