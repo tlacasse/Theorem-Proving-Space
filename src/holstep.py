@@ -366,7 +366,6 @@ class HolstepTreeParser:
         elif token.rstrip("'") in self.varfunclist:
             # predicate
             self._handle_var(token)
-            #self._handle_fun(token, kind='VFN')
         elif token[0] == '_' or parens is not None or token in self.constants:
             if self.test_var(token) and not token in self.constants:
                 # assume var
@@ -406,36 +405,46 @@ class HolstepTreeParser:
         if dug_up_node is not None:
             self.stack[-1].children.append(dug_up_node)
         
-    def _handle_var(self, var, syms=None):
-        apost = None
-        if var[-1] == "'":
-            apost = "'"
-            var = var[:-1]
-        
-        varnode = None
-        if var.islower() or self.is_genpvar(var):
-            if var not in self.varlist:
-                self.varlist.append(var)
-            varnode = HolstepTreeNode(HolstepToken(var, 'VAR'))
-        else:
-            if var not in self.varfunclist:
-                self.varfunclist.append(var)
-            varnode = HolstepTreeNode(HolstepToken(var, 'VFN'))
-        
-        qnt = self.stack[-1]
-        if qnt.value == 'o':
-            qnt.children[0].children.append(varnode)
-        else:
-            qnt.children.append(varnode)
-        
-        for sym in [apost, syms]:
-            if sym is not None:
-                symnode = HolstepTreeNode(HolstepToken(sym, 'DOT'))
+    def _handle_var(self, var_, syms=None):
+        def _f(var):
+            varnode = None
+            if var.islower() or self.is_genpvar(var):
+                if var not in self.varlist:
+                    self.varlist.append(var)
+                varnode = HolstepTreeNode(HolstepToken(var, 'VAR'))
+            else:
+                if var not in self.varfunclist:
+                    self.varfunclist.append(var)
+                varnode = HolstepTreeNode(HolstepToken(var, 'VFN'))
+            
+            qnt = self.stack[-1]
+            if qnt.value == 'o':
+                qnt.children[0].children.append(varnode)
+            else:
+                qnt.children.append(varnode)
+            
+            if syms is not None:
+                symnode = HolstepTreeNode(HolstepToken(syms, 'DOT'))
                 varnode.children.append(symnode)
+            return varnode
+        self._check_apost(var_, _f)
                 
     def _handle_value(self, token):
-        node = HolstepTreeNode(HolstepToken(token, 'VAL'))
-        self.stack[-1].children.append(node)
+        def _f(token):
+            node = HolstepTreeNode(HolstepToken(token, 'VAL'))
+            self.stack[-1].children.append(node)
+            return node
+        self._check_apost(token, _f)
+        
+    def _check_apost(self, token, func):
+        apost = None
+        if token[-1] == "'":
+            apost = "'"
+            token = token[:-1]
+        node = func(token)
+        if apost is not None:
+            apostnode = HolstepTreeNode(HolstepToken(apost, 'DOT'))
+            node.children.insert(0, apostnode)
         
     def is_word(self, token):
         return token[0].isalpha() or token[0] == '_'

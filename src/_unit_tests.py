@@ -339,6 +339,10 @@ class TestHolstepTreeParsing(unittest.TestCase):
                 ],
                ['|-', ['test', ['s']]]
                ], exp_vars=['pf', 'pg', 'ph', 's'])
+            
+    def test_apostrophe_on_value(self):
+        check(self, "|- (MMs_v39 scs_4M6')",
+              ['|-', ['MMs_v39', ['scs_4M6', ["'"]]]])         
      
 class TestHolstepParserSplitWord(unittest.TestCase):
 
