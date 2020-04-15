@@ -351,6 +351,14 @@ class TestHolstepTreeParsing(unittest.TestCase):
                 ["'"],
                 ['test', ['g']]
                 ]], exp_vars=['g'])
+            
+    def test_apostrophe_then_operation(self):
+        check(self, "|- (fa' = T)",
+              ['|-', 
+               ['=',
+                ['fa', ["'"]],
+                ['T']
+                ]], exp_vars=[])            
      
 class TestHolstepParserSplitWord(unittest.TestCase):
 

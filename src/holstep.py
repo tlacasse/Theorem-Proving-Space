@@ -466,10 +466,11 @@ class HolstepTreeParser:
                 return token[0].isalpha() and token[1].isdigit()
     
     def dig_up(self, node):
-        if len(node.children) > 0:
-            self.fail(node)
+        children = node.children
         dug_up_node = HolstepTreeNode(node.token)
+        dug_up_node.children = children
         node.settoken(HolstepToken('FILL', 'FILL'))
+        node.children = []
         return dug_up_node
 
     def split_end_parens(self, token):
