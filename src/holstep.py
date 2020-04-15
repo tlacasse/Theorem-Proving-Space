@@ -255,7 +255,7 @@ class HolstepTreeParser:
         self.stack = []
         self.latest_source = None
         self.prevtoken = None
-        self.constants = ['T', 'F', 'ldih_x', 'UNIV']
+        self.constants = ['T', 'F', 'ldih_x', 'UNIV', 'main_nonlinear_terminal_v11']
         
     def parse(self, tokens):
         self.latest_source = tokens
@@ -446,7 +446,10 @@ class HolstepTreeParser:
     def split_end_parens(self, token):
         i = token.find(')')
         if i == -1:
-            return (token, None, None)
+            if len(token) > 1 and token[-1] == ',':
+                return (token[:-1], None, ',')
+            else:
+                return (token, None, None)
         else:
             syms = token[i:]
             token = token[:i]

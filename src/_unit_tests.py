@@ -355,6 +355,12 @@ class TestHolstepParserSplitWord(unittest.TestCase):
         self.assertEquals(token, ',')
         self.assertEquals(parens, ')))')
         self.assertEquals(comma, ',')
+        
+    def test_just_word_and_comma(self):
+        token, parens, comma = parser.split_end_parens('test,')
+        self.assertEquals(token, 'test')
+        self.assertIsNone(parens)
+        self.assertEquals(comma, ',')
 
 if __name__ == '__main__':
     unittest.main()
