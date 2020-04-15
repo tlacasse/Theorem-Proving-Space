@@ -265,7 +265,7 @@ class HolstepTreeParser:
                 self._handle_fun('|-')
             elif token[0] == '(':
                 self._handle_beginning_paren(token)
-            elif self.is_word(token):
+            elif self.is_word(token) or token.find(')') >= 0:
                 self._handle_word(token)
             else:
                 self._handle_operation(token)
@@ -332,6 +332,9 @@ class HolstepTreeParser:
                 self._handle_value(token)
         elif token == 'o':
             self._handle_operation(token)
+        elif not token[0].isalpha():
+            # ex: '+)' as a value not operation
+            self._handle_value(token)
         else:
             if self.test_var(token):
                 # assume var

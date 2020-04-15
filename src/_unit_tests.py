@@ -274,5 +274,8 @@ class TestHolstepTreeParsing(unittest.TestCase):
                   ['P', ['NUMERAL', ['BIT0', ['BIT1', ['_0']]]]],
                   ]]]], exp_varfuncs=['P'])        
 
+    def test_op_as_term(self):
+        check(self, '|- (monoidal +)', ['|-', ['monoidal', ['+']]])  
+
 if __name__ == '__main__':
     unittest.main()
