@@ -378,8 +378,10 @@ class HolstepTreeParser:
         elif not token[0].isalpha():
             # ex: '+)' as a value not operation
             self._handle_value(token)
-        elif parens is None and self.stack[-1].value == ',':
+        elif ((parens is None and self.stack[-1].value == ',') or 
+              self.stack[0].value == 'STEP' and self.stack[-1].value == '|-'):
             # named premise in list ex: "pf, pg |- ..."
+            # or named step result ex: "... |- name"
             self._handle_var(token)
         else:
             if self.test_var(token):
@@ -408,10 +410,10 @@ class HolstepTreeParser:
             return self.stack[-1]
         self._check_apost(token, _f)
         
-    def _handle_var(self, var_, syms=None):
+    def _handle_var(self, var, syms=None):
         def _f(var):
             varnode = None
-            if var.islower() or self.is_genpvar(var):
+            if var[0].islower() or self.is_genpvar(var):
                 if var not in self.varlist:
                     self.varlist.append(var)
                 varnode = HolstepTreeNode(HolstepToken(var, 'VAR'))
@@ -430,7 +432,7 @@ class HolstepTreeParser:
                 symnode = HolstepTreeNode(HolstepToken(syms, 'DOT'))
                 varnode.children.append(symnode)
             return varnode
-        self._check_apost(var_, _f)
+        self._check_apost(var, _f)
                 
     def _handle_value(self, token):
         def _f(token):

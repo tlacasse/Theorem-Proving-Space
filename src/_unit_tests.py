@@ -359,6 +359,13 @@ class TestHolstepTreeParsing(unittest.TestCase):
                 ['fa', ["'"]],
                 ['T']
                 ]], exp_vars=[])            
+
+    def test_named_step_result(self):
+        check(self, "(test T) |- generatePolygon_reduction_v7",
+              ['STEP',
+               [',', ['test', ['T']]],
+               ['|-', ['generatePolygon_reduction_v7']]
+               ], exp_vars=['generatePolygon_reduction_v7'])
      
 class TestHolstepParserSplitWord(unittest.TestCase):
 
