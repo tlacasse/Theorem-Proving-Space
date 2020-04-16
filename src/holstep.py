@@ -235,7 +235,7 @@ class QuickHolstepSeqParser:
             tokens.append(',')
         for token in tokensspl:
             token = token.replace('(', '').replace(')', '')
-            if len(token) >= 2 and token[1].isalpha() and not token[0].isalpha():
+            if len(token) >= 2 and (token[1].isalpha() or token[1] == '_') and not token[0].isalpha():
                 tokens.append(token[0])
                 if token[-1] == '.':
                     self.append(tokens, token[1:-1])
@@ -332,7 +332,7 @@ class HolstepTreeParser:
             # funcs or constants or vars
             self._handle_word(token)
         else:
-            if len(token) > 1 and token[1].isalpha():
+            if len(token) > 1 and (token[1].isalpha() or token[1] == '_'):
                 # quantifiers
                 if len(token) == 2:
                     self.fail(token)
@@ -362,6 +362,9 @@ class HolstepTreeParser:
                 self.stack[-1].consumefirstchild()
         if token.rstrip("'") in self.varlist:
             # var
+            self._handle_var(token)
+        elif token[0] == '_' and 'v' + token.rstrip("'") in self.varlist:
+            # var "_nnnn" as "v_nnnn"
             self._handle_var(token)
         elif token.rstrip("'") in self.varfunclist:
             # predicate
@@ -412,6 +415,8 @@ class HolstepTreeParser:
         
     def _handle_var(self, var, syms=None):
         def _f(var):
+            if var[0] == '_':
+                var = 'v' + var
             varnode = None
             if var[0].islower() or self.is_genpvar(var):
                 if var not in self.varlist:

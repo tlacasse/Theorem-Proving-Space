@@ -366,6 +366,16 @@ class TestHolstepTreeParsing(unittest.TestCase):
                [',', ['test', ['T']]],
                ['|-', ['generatePolygon_reduction_v7']]
                ], exp_vars=['generatePolygon_reduction_v7'])
+            
+    def test_constant_variable(self):
+        check(self, "|- (!_1369016. (!m. ((m < _1369016) \\/ (_23423 < _7647))))",
+              ['|-',
+               ['!', ['v_1369016', ['.']],
+                ['!', ['m', ['.']],
+                 ['\\/',
+                  ['<', ['m'], ['v_1369016']],
+                  ['<', ['_23423'], ['_7647']]
+                  ]]]], exp_vars=['v_1369016', 'm'])
      
 class TestHolstepParserSplitWord(unittest.TestCase):
 
