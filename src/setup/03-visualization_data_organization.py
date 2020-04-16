@@ -1,6 +1,7 @@
 import sys
 import numpy as np
 from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA
 
 sys.path.append('..')
 from holstep import Holstep
@@ -33,6 +34,7 @@ def main():
     steps.append(STEP_holstepview_metric_base)
     steps.append(STEP_holstepview_metric_fix)
     steps.append(STEP_holstepview_tsne)
+    steps.append(STEP_holstepview_pca)
     steps.append(STEP_subset_list)
     steps.append(STEP_subset_premise_identifiers)
     steps.append(STEP_subset_conjecture_coordinates)
@@ -43,6 +45,7 @@ def main():
     steps.append(STEP_subset_metric_base)
     steps.append(STEP_subset_metric_fix)
     steps.append(STEP_subset_tsne)
+    steps.append(STEP_subset_pca)
     for step in steps:
         print()
         print(step)
@@ -81,6 +84,12 @@ def STEP_holstepview_tsne():
     apply_tsne(inpath, outpath, 2)
     apply_tsne(inpath, outpath, 3)
     
+def STEP_holstepview_pca():
+    inpath = '../../data/holstepview_conjecture_coords.npy'
+    outpath = '../../data/holstepview_pca_{}d.npy'
+    apply_pca(inpath, outpath, 2)
+    apply_pca(inpath, outpath, 3)
+    
 def STEP_subset_list():
     build_subset_list(additional_deletions=None)
     
@@ -114,6 +123,12 @@ def STEP_subset_tsne():
     outpath = '../../data/subset_tsne_{}d.npy'
     apply_tsne(inpath, outpath, 2)
     apply_tsne(inpath, outpath, 3)
+    
+def STEP_subset_pca():
+    inpath = '../../data/subset_conjecture_coords.npy'
+    outpath = '../../data/subset_pca_{}d.npy'
+    apply_pca(inpath, outpath, 2)
+    apply_pca(inpath, outpath, 3)
     
 ###############################################################################
 
@@ -267,10 +282,20 @@ def apply_tsne(inpath, outpath, dim):
     
     tsne_results = np.array(tsne_results)
     np.save(outpath.format(dim), tsne_results)
+    
+def apply_pca(inpath, outpath, dim):
+    coords = np.load(inpath)
+
+    pca = PCA(n_components=dim)
+    pca_results = pca.fit_transform(coords)
+    
+    pca_results = np.array(pca_results)
+    np.save(outpath.format(dim), pca_results) 
 
 ###############################################################################
     
 def between(x, a, b):
     return x >= a and x <= b
 
-main()
+if __name__ == '__main__':
+    main()

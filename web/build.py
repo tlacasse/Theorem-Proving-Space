@@ -54,4 +54,5 @@ def clear_dir(path):
         print(f)
         os.remove(f)
                 
-main()
+if __name__ == '__main__':
+    main()

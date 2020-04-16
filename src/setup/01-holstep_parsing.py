@@ -153,4 +153,5 @@ class LineReader:
         # escape
         return text.replace("'", "''").strip()
 
-main()
+if __name__ == '__main__':
+    main()
