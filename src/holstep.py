@@ -234,8 +234,11 @@ class QuickHolstepSeqParser:
             tokens.append('STEP')
             tokens.append(',')
         for token in tokensspl:
+            has_begin_paren = token.find('(') >= 0
             token = token.replace('(', '').replace(')', '')
-            if len(token) >= 2 and (token[1].isalpha() or token[1] == '_') and not token[0].isalpha():
+            if (has_begin_paren and len(token) >= 2
+                    and (token[1].isalpha() or (token[1] == '_' and token[2:-1].isdigit())) 
+                    and not token[0].isalpha()):
                 tokens.append(token[0])
                 if token[-1] == '.':
                     self.append(tokens, token[1:-1])
@@ -332,7 +335,7 @@ class HolstepTreeParser:
             # funcs or constants or vars
             self._handle_word(token)
         else:
-            if len(token) > 1 and (token[1].isalpha() or token[1] == '_'):
+            if len(token) > 1 and (token[1].isalpha() or (token[1] == '_' and token[2:-1].isdigit())):
                 # quantifiers
                 if len(token) == 2:
                     self.fail(token)
