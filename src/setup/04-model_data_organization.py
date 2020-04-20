@@ -22,7 +22,6 @@ def main():
     steps.append(STEP_train_token_ids)
     steps.append(STEP_relationships)
     steps.append(STEP_relationships_map)
-    steps.append(STEP_train_conjecture_token_bag)
     steps.append(STEP_train_premise_subtrees)
     steps.append(STEP_model_training_arrays)
     for step in steps:
@@ -89,9 +88,6 @@ def STEP_relationships_map():
     build_premise_to_conjecture_map('train')
     build_premise_to_conjecture_map('test')
     
-def STEP_train_conjecture_token_bag():
-    build_conjecture_token_bag('train')
-    
 def STEP_train_premise_subtrees():
     build_premise_subtrees('train')
     
@@ -139,7 +135,7 @@ def build_trees_per_table(data_prefix, part_prefix):
 
     def save(t, n):
         n = ("000000" + str(n))[-6:]
-        dump_data(PATH + '{}_{}_trees_{}.data'.format(part_prefix, data_prefix, n), t)
+        dump_data(PATH + 'trees/{}_{}_trees_{}.data'.format(part_prefix, data_prefix, n), t)
         
     i = 0
     trees = []
@@ -260,22 +256,6 @@ def build_premise_to_conjecture_map(part_prefix):
         pcmap[pid].append(cid)
     print(len(pcmap))
     dump_data(PATH + '{}_relationships_dict.data'.format(part_prefix), pcmap)
-    
-def build_conjecture_token_bag(part_prefix):
-    cids = np.load(PATH + '{}_conjecture_ids.npy'.format(part_prefix))
-    tokens = load_data(PATH + '{}_conjecture_tokens_ids.data'.format(part_prefix))
-    tokenmap = load_data(PATH + '{}_conjecture_tokens_idmap.data'.format(part_prefix))
-    
-    result = np.zeros((cids.shape[0], len(tokens)), dtype='uint8')
-    for i, (v, vf, tree) in enumerate(iter_trees('conjecture', part_prefix)):
-        tree.cleanreplace(v, vf, tokens)
-        tree_tokens = tree.unique_tokens()
-        for j, t in enumerate(tree_tokens.keys()):
-            result[i][tokenmap[t]] = 1
-            
-    print(result)
-    print(result.shape)
-    np.save(PATH + '{}_conjecture_token_bag.npy'.format(part_prefix), result)
 
 class Ref:
     
@@ -292,7 +272,7 @@ def build_premise_subtrees(part_prefix):
     
     def save(t, n):
         n = ("000000000" + str(n))[-9:]
-        dump_data(PATH + '{}_premise_subtrees_{}.data'.format(part_prefix, n), t)
+        dump_data(PATH + 'subtrees/{}_premise_subtrees_{}.data'.format(part_prefix, n), t)
     
     def worksubtree(pid, tree, ref, depth=0):
         first_child = 0
@@ -393,12 +373,12 @@ def build_model_training_map(part_prefix):
 ###############################################################################
    
 def iter_trees(data_prefix, part_prefix):
-    return iter_files('{}_{}_trees_'.format(part_prefix, data_prefix))
+    return iter_files('trees/{}_{}_trees_'.format(part_prefix, data_prefix))
             
-_premise_subtrees_0 = '{}_premise_subtrees_0'
+_premise_subtrees_0 = 'subtrees/{}_premise_subtrees_0'
 
 def iter_premise_subtrees(part_prefix):
-    return iter_files('{}_premise_subtrees_0'.format(part_prefix))
+    return iter_files(_premise_subtrees_0.format(part_prefix))
 
 def iter_files(fileprefix):   
     for f in glob.glob(PATH + '{}*'.format(fileprefix)):
