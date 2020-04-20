@@ -20,6 +20,7 @@ def main():
     steps.append(STEP_clean_train_tokens)
     steps.append(STEP_train_token_ids)
     steps.append(STEP_relationships)
+    steps.append(STEP_train_conjecture_token_bag)
     for step in steps:
         print()
         print(step)
@@ -79,6 +80,9 @@ def STEP_train_token_ids():
 def STEP_relationships():
     build_premise_conjecture_relationships('train')
     build_premise_conjecture_relationships('test')
+    
+def STEP_train_conjecture_token_bag():
+    build_conjecture_token_bag('train')
     
 ###############################################################################
 
@@ -233,6 +237,22 @@ def build_premise_conjecture_relationships(part_prefix):
     print(result.shape)
     np.save(PATH + '{}_relationships.npy'.format(part_prefix), result)
     
+def build_conjecture_token_bag(part_prefix):
+    cids = np.load(PATH + '{}_conjecture_ids.npy'.format(part_prefix))
+    tokens = load_data(PATH + '{}_conjecture_tokens_ids.data'.format(part_prefix))
+    tokenmap = load_data(PATH + '{}_conjecture_tokens_idmap.data'.format(part_prefix))
+    
+    result = np.zeros((cids.shape[0], len(tokens)), dtype='uint8')
+    for i, (v, vf, tree) in enumerate(iter_trees('conjecture', part_prefix)):
+        tree.cleanreplace(v, vf, tokens)
+        tree_tokens = tree.unique_tokens()
+        for j, t in enumerate(tree_tokens.keys()):
+            result[i][tokenmap[t]] = 1
+            
+    print(result)
+    print(result.shape)
+    np.save(PATH + 'PC-A_{}_conjecture_token_bag.npy'.format(part_prefix), result)
+
 def iter_trees(data_prefix, part_prefix):
     return iter_files('{}_{}_trees_'.format(part_prefix, data_prefix))
             
