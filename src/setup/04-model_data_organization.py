@@ -1,5 +1,6 @@
 import sys
 import glob
+import re
 import numpy as np
 from collections import Counter
 
@@ -23,6 +24,7 @@ def main():
     steps.append(STEP_relationships_map)
     steps.append(STEP_train_conjecture_token_bag)
     steps.append(STEP_train_premise_subtrees)
+    steps.append(STEP_model_training_arrays)
     for step in steps:
         print()
         print(step)
@@ -93,6 +95,9 @@ def STEP_train_conjecture_token_bag():
 def STEP_train_premise_subtrees():
     build_premise_subtrees('train')
     
+def STEP_model_training_arrays():
+    build_model_training_map('train')
+        
 ###############################################################################
 
 def build_premise_list(cids, prefix):
@@ -325,10 +330,74 @@ def build_premise_subtrees(part_prefix):
     print(len(ref.subtreemaplist))
     dump_data(PATH + '{}_premise_subtrees_idmap.data'.format(part_prefix), ref.subtreemap)
     dump_data(PATH + '{}_premise_subtrees_ids.data'.format(part_prefix), ref.subtreemaplist)
+
+class LayerRef:
+    
+    def __init__(self, name, part_prefix):
+        self.name = name
+        self.part_prefix = part_prefix
+        self.records = []
+        self.counter = 0
+        
+    def add(self, pstid, left, right, cid):
+        self.records.append([pstid, left, right, cid])
+        
+        self.counter += 1
+        if self.counter % 1000000 == 0:
+            self.save()
+            
+    def save(self):
+        n = ("000000000" + str(self.counter))[-9:]
+        path = 'records/{}_{}_{}.data'.format(self.part_prefix, self.name, n)
+        print(path)
+        dump_data(PATH + path, self.records)
+        self.records = []
+ 
+def build_model_training_map(part_prefix):
+    relationships = load_data(PATH + '{}_relationships_dict.data'.format(part_prefix))
+
+    layerrefs = [LayerRef(('000' + str(n))[-3:], part_prefix) for n in range(2, 11)]
+    layerrefs.append(LayerRef('11-15', part_prefix))
+    layerrefs.append(LayerRef('16-30', part_prefix))
+    layerrefs.append(LayerRef('gt30', part_prefix))
+    layerrefs.append(LayerRef('whole', part_prefix))
+    
+    layerdict = {}
+    for i, n in enumerate(range(2, 11)):
+        layerdict[n] = i
+    for n in range(11, 16):
+        layerdict[n] = 9
+    for n in range(16, 31):
+        layerdict[n] = 10
+        
+    for pid, token, stid, left, right, depth, layer_count in iter_premise_subtrees(part_prefix):
+        if layer_count == 1:
+            continue
+        layer = None
+        if depth == 0:
+            # entire premise tree
+            layer = 12
+        elif layer_count in layerdict:
+            layer = layerdict[layer_count]
+        else:
+            layer = 11
+        layer = layerrefs[layer]
+        
+        for cid in relationships[pid]:
+            layer.add(stid, left, right, cid)
+            
+    for l in layerrefs:
+        l.save()
+    # 27,197,491
     
 def iter_trees(data_prefix, part_prefix):
     return iter_files('{}_{}_trees_'.format(part_prefix, data_prefix))
             
+_premise_subtrees_0 = '{}_premise_subtrees_0'
+
+def iter_premise_subtrees(part_prefix):
+    return iter_files('{}_premise_subtrees_0'.format(part_prefix))
+
 def iter_files(fileprefix):   
     for f in glob.glob(PATH + '{}*'.format(fileprefix)):
         trees = load_data(f)
