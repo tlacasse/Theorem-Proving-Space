@@ -1,4 +1,5 @@
 import sys
+import glob
 import numpy as np
 from collections import Counter
 
@@ -15,6 +16,9 @@ def main():
     steps.append(STEP_train_load_texts)
     steps.append(STEP_train_trees)
     steps.append(STEP_test_trees)
+    steps.append(STEP_train_tokens_unique)
+    steps.append(STEP_clean_train_tokens)
+    steps.append(STEP_train_token_ids)
     for step in steps:
         print()
         print(step)
@@ -59,6 +63,17 @@ def STEP_test_trees():
     build_trees_per_table('conjecture', 'test')
     build_trees_per_table('premise', 'test')
 
+def STEP_train_tokens_unique():
+    build_unique_tokens('conjecture', 'train')
+    build_unique_tokens('premise', 'train')
+    
+def STEP_clean_train_tokens():
+    clean_unique_tokens('conjecture', 'train')
+    clean_unique_tokens('premise', 'train')
+    
+def STEP_train_token_ids():
+    build_ids('conjecture', 'train', 'unique_tokens', 'tokens')
+    build_ids('premise', 'train', 'unique_tokens', 'tokens')
     
 ###############################################################################
 
@@ -138,5 +153,68 @@ def build_trees_per_table(data_prefix, part_prefix):
         trees.append((parser.varlist, parser.varfunclist, tree.as_lite()))
     save(trees, i)
     
+def build_unique_tokens(data_prefix, part_prefix):
+    unique_tokens = Counter()
+    for v, vf, tree in iter_trees(data_prefix, part_prefix):
+        unique_tokens.update(tree.unique_tokens())
+    dump_data(PATH + '{}_{}_unique_tokens_base.data'.format(part_prefix, data_prefix), 
+              unique_tokens) 
+    
+def clean_unique_tokens(data_prefix, part_prefix):
+    tokens = load_data(PATH + '{}_{}_unique_tokens_base.data'.format(part_prefix, data_prefix))
+    print(len(tokens))
+    varset = set()
+    varfuncset = set()
+    for v, vf, tree in iter_trees(data_prefix, part_prefix):
+        varset.update(v)
+        varfuncset.update(vf)
+    print(len(varset))
+    print(len(varfuncset))
+    keys_to_delete = []
+    
+    for k, kset in [('VAR', varset), ('VARFUNC', 'varfuncset')]:
+        tokens[k] = 0
+        for v in kset:
+            if v in tokens:
+                tokens[k] += tokens[v]
+                keys_to_delete.append(v)
+            
+    tokens['_n'] = 0
+    for k in tokens:
+        if k[0] == '_' and k[1:].isdigit():
+            tokens['_n'] += tokens[k]
+            keys_to_delete.append(k)
+            
+    tokens['UNK'] = 0
+    
+    print(len(keys_to_delete))
+    for k in keys_to_delete:
+        del tokens[k]
+     
+    print(len(tokens))
+    print()
+    print()
+    dump_data(PATH + '{}_{}_unique_tokens.data'.format(part_prefix, data_prefix), tokens)
+    
+def build_ids(data_prefix, part_prefix, input_counter, output_name):
+    objs = load_data(PATH + '{}_{}_{}.data'.format(part_prefix, data_prefix, input_counter))
+    
+    ids = [k for k in objs.keys()]
+    ids.sort()
+    idmap = {k:i for i, k in enumerate(ids)}
+    
+    dump_data(PATH + '{}_{}_{}_ids.data'.format(part_prefix, data_prefix, output_name), ids)
+    dump_data(PATH + '{}_{}_{}_idmap.data'.format(part_prefix, data_prefix, output_name), idmap)
+    
+def iter_trees(data_prefix, part_prefix):
+    return iter_files('{}_{}_trees_'.format(part_prefix, data_prefix))
+            
+def iter_files(fileprefix):   
+    for f in glob.glob(PATH + '{}*'.format(fileprefix)):
+        trees = load_data(f)
+        print(f)
+        for t in trees:
+            yield t
+
 if __name__ == '__main__':
     main()
