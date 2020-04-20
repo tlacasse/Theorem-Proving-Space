@@ -40,6 +40,10 @@ def STEP_id_lists():
     print('PREMISES')
     build_premise_list(train_cids, 'train')
     build_premise_list(test_cids, 'test')
+    print('IDMAPS')
+    for a in ['train', 'test']:
+        for b in ['conjecture', 'premise']:
+            build_id_map('{}_{}'.format(a, b))
     
 def STEP_train_load_texts():
     load_texts('Conjecture', 'conjecture', 'train')
@@ -73,6 +77,11 @@ def build_premise_list(cids, prefix):
     print(premises)
     print(premises.shape)
     np.save(PATH + '{}_premise_ids.npy'.format(prefix), premises)
+
+def build_id_map(prefix):
+    arr = np.load(PATH + '{}_ids.npy'.format(prefix))
+    idmap = {k: i for i, k in enumerate(arr)}
+    dump_data(PATH + '{}_idmap.data'.format(prefix), idmap)
 
 # list together all text representations   
 def load_texts(table, data_prefix, part_prefix):
