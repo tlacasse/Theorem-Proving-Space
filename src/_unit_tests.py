@@ -376,6 +376,14 @@ class TestHolstepTreeParsing(unittest.TestCase):
                   ['<', ['m'], ['v_1369016']],
                   ['<', ['_23423'], ['_7647']]
                   ]]]], exp_vars=['v_1369016', 'm'])
+    
+    def test_sym_underscore_that_isnt_constant_variable(self):
+        check(self, "|- ((*_c T) = (x *_c x))",
+              ['|-',
+               ['=',
+                ['*_c', ['T']],
+                ['*_c', ['x'], ['x']]
+                ]], exp_vars=['x'])
      
 class TestHolstepParserSplitWord(unittest.TestCase):
 
