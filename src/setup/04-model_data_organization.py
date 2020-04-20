@@ -20,6 +20,7 @@ def main():
     steps.append(STEP_clean_train_tokens)
     steps.append(STEP_train_token_ids)
     steps.append(STEP_relationships)
+    steps.append(STEP_relationships_map)
     steps.append(STEP_train_conjecture_token_bag)
     steps.append(STEP_train_premise_subtrees)
     for step in steps:
@@ -81,6 +82,10 @@ def STEP_train_token_ids():
 def STEP_relationships():
     build_premise_conjecture_relationships('train')
     build_premise_conjecture_relationships('test')
+    
+def STEP_relationships_map():
+    build_premise_to_conjecture_map('train')
+    build_premise_to_conjecture_map('test')
     
 def STEP_train_conjecture_token_bag():
     build_conjecture_token_bag('train')
@@ -232,7 +237,7 @@ def build_premise_conjecture_relationships(part_prefix):
         print('loaded')
     
     relationships = [(c, p) for c, p in relationships if c in cids]   
-    result = np.empty((len(relationships), 2), dtype='uint16')
+    result = np.empty((len(relationships), 2), dtype='uint32')
     for i, (cid, pid) in enumerate(relationships):
         result[i][0] = cidmap[cid]
         result[i][1] = pidmap[pid]
@@ -240,6 +245,16 @@ def build_premise_conjecture_relationships(part_prefix):
     print(result)
     print(result.shape)
     np.save(PATH + '{}_relationships.npy'.format(part_prefix), result)
+    
+def build_premise_to_conjecture_map(part_prefix):
+    relationships = np.load(PATH + '{}_relationships.npy'.format(part_prefix))
+    pcmap = dict()
+    for cid, pid in relationships:
+        if pid not in pcmap:
+            pcmap[pid] = []
+        pcmap[pid].append(cid)
+    print(len(pcmap))
+    dump_data(PATH + '{}_relationships_dict.data'.format(part_prefix), pcmap)
     
 def build_conjecture_token_bag(part_prefix):
     cids = np.load(PATH + '{}_conjecture_ids.npy'.format(part_prefix))
