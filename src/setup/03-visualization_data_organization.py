@@ -7,6 +7,8 @@ sys.path.append('..')
 from holstep import Holstep
 from data import dump_data, load_data
 
+PATH = '..\\..\\data\\vissetup\\'
+
 # steps need to be used at least this many times
 # to be considered as a dimension in the conjecture position
 HOLSTEP_STEPUSAGE_LOWER_BOUND = 20
@@ -62,7 +64,7 @@ def STEP_holstep_conjecture_ids():
         ids = [a[0] for a in ids]
         
         ids = np.array(ids)
-        np.save('../../data/holstep_conjecture_ids.npy', ids)
+        np.save(PATH + 'holstep_conjecture_ids.npy', ids)
         print(ids)
         print(ids.shape)
      
@@ -79,14 +81,14 @@ def STEP_holstepview_metric_fix():
     fix_metric('holstepview')
     
 def STEP_holstepview_tsne():
-    inpath = '../../data/holstepview_metric.npy'
-    outpath = '../../data/holstepview_tsne_{}d.npy'
+    inpath = PATH + 'holstepview_metric.npy'
+    outpath = PATH + 'holstepview_tsne_{}d.npy'
     apply_tsne(inpath, outpath, 2)
     apply_tsne(inpath, outpath, 3)
     
 def STEP_holstepview_pca():
-    inpath = '../../data/holstepview_conjecture_coords.npy'
-    outpath = '../../data/holstepview_pca_{}d.npy'
+    inpath = PATH + 'holstepview_conjecture_coords.npy'
+    outpath = PATH + 'holstepview_pca_{}d.npy'
     apply_pca(inpath, outpath, 2)
     apply_pca(inpath, outpath, 3)
     
@@ -100,16 +102,16 @@ def STEP_subset_conjecture_coordinates():
     build_conjecture_coordinates('subset')
     
 def STEP_subset_zero_premise_conjectures():
-    coords = np.load('../../data/subset_conjecture_coords.npy')
+    coords = np.load(PATH + 'subset_conjecture_coords.npy')
     counts = [np.sum(np.abs(c)) for c in coords]
     zeros = [i for i in range(len(counts)) if counts[i] == 0]
     zeros = np.array(zeros)
     print(zeros)
     print(zeros.shape)
-    np.save('../../data/subset_zero_conjectures.npy', zeros)
+    np.save(PATH + 'subset_zero_conjectures.npy', zeros)
     
 def STEP_subset_list_without_zero_premises():
-    zeros = np.load('../../data/subset_zero_conjectures.npy')
+    zeros = np.load(PATH + 'subset_zero_conjectures.npy')
     build_subset_list(additional_deletions=zeros)
     
 def STEP_subset_metric_base():
@@ -119,21 +121,21 @@ def STEP_subset_metric_fix():
     fix_metric('subset')
     
 def STEP_subset_tsne():
-    inpath = '../../data/subset_metric.npy'
-    outpath = '../../data/subset_tsne_{}d.npy'
+    inpath = PATH + 'subset_metric.npy'
+    outpath = PATH + 'subset_tsne_{}d.npy'
     apply_tsne(inpath, outpath, 2)
     apply_tsne(inpath, outpath, 3)
     
 def STEP_subset_pca():
-    inpath = '../../data/subset_conjecture_coords.npy'
-    outpath = '../../data/subset_pca_{}d.npy'
+    inpath = PATH + 'subset_conjecture_coords.npy'
+    outpath = PATH + 'subset_pca_{}d.npy'
     apply_pca(inpath, outpath, 2)
     apply_pca(inpath, outpath, 3)
     
 ###############################################################################
 
 def build_premise_identifiers(prefix, premise_lower_bound):
-    cids = np.load('../../data/{}_conjecture_ids.npy'.format(prefix))
+    cids = np.load(PATH + '{}_conjecture_ids.npy'.format(prefix))
     with Holstep.Setup() as db:
         sql = 'SELECT ConjectureId, StepId FROM ConjectureStep '
         sql += 'GROUP BY StepId HAVING COUNT(StepId) >= {} '.format(premise_lower_bound)
@@ -142,21 +144,21 @@ def build_premise_identifiers(prefix, premise_lower_bound):
         steps = sorted(list(set(steps)))    
     
         id_to_step = np.array(steps)
-        np.save('../../data/{}_premise_id_to_step.npy'.format(prefix), id_to_step)
+        np.save(PATH + '{}_premise_id_to_step.npy'.format(prefix), id_to_step)
         print(id_to_step)
         print(len(id_to_step))
         
         step_to_id = {}
         for i, x in enumerate(steps):
             step_to_id[x] = i
-        dump_data('../../data/{}_premise_step_to_id.data'.format(prefix), step_to_id)
+        dump_data(PATH + '{}_premise_step_to_id.data'.format(prefix), step_to_id)
         print(step_to_id)
         print(len(step_to_id))
         
 def build_conjecture_coordinates(prefix):
-    cids = np.load('../../data/{}_conjecture_ids.npy'.format(prefix))
-    id_to_step = np.load('../../data/{}_premise_id_to_step.npy'.format(prefix))
-    step_to_id = load_data('../../data/{}_premise_step_to_id.data'.format(prefix))
+    cids = np.load(PATH + '{}_conjecture_ids.npy'.format(prefix))
+    id_to_step = np.load(PATH + '{}_premise_id_to_step.npy'.format(prefix))
+    step_to_id = load_data(PATH + '{}_premise_step_to_id.data'.format(prefix))
     positions = np.zeros((len(cids), len(id_to_step)), dtype=int)
     with Holstep.Setup() as db:
         for i, cid in enumerate(cids):
@@ -170,12 +172,12 @@ def build_conjecture_coordinates(prefix):
                     positions[i][step_to_id[sid]] = (1 if is_useful == 1 else -1)
 
     positions = np.array(positions)
-    np.save('../../data/{}_conjecture_coords.npy'.format(prefix), positions)
+    np.save(PATH + '{}_conjecture_coords.npy'.format(prefix), positions)
     print(positions)
     print(positions.shape)
     
 def build_subset_list(additional_deletions=None):
-    tsne = np.load('../../data/holstepview_tsne_2d.npy')
+    tsne = np.load(PATH + 'holstepview_tsne_2d.npy')
     vbetween = np.vectorize(between)
     subset_x = vbetween(tsne[:, 0], SUBSET_X_MIN, SUBSET_X_MAX) 
     subset_y = vbetween(tsne[:, 1], SUBSET_Y_MIN, SUBSET_Y_MAX)
@@ -188,7 +190,7 @@ def build_subset_list(additional_deletions=None):
     print(len(subset_compl))
     subset_compl = np.array(subset_compl)
     
-    ids = np.load('../../data/holstep_conjecture_ids.npy')
+    ids = np.load(PATH + 'holstep_conjecture_ids.npy')
     ids = np.delete(ids, subset_compl, axis=0)
     
     if additional_deletions is not None:
@@ -196,11 +198,11 @@ def build_subset_list(additional_deletions=None):
     
     print(list(ids))
     print(ids.shape)
-    np.save('../../data/subset_conjecture_ids.npy', ids)
+    np.save(PATH + 'subset_conjecture_ids.npy', ids)
     
 def build_metric(prefix):
     def load_coords():
-        return np.load('../../data/{}_conjecture_coords.npy'.format(prefix))
+        return np.load(PATH + '{}_conjecture_coords.npy'.format(prefix))
     
     # example:
     # intersect: [-2, -1, 0, 1, 2] => [1, 0, 0, 0, 1]
@@ -240,10 +242,10 @@ def build_metric(prefix):
             # jaccard similarity
             results[i][j] = np.sum(pos_intersect[j,:]) / np.sum(pos_union[j,:])
             
-    np.save('../../data/{}_metric_base.npy'.format(prefix), results)
+    np.save(PATH + '{}_metric_base.npy'.format(prefix), results)
     
 def fix_metric(prefix):
-    array = np.load('../../data/{}_metric_base.npy'.format(prefix))
+    array = np.load(PATH + '{}_metric_base.npy'.format(prefix))
     
     def fill_in_diagonal(array):
         for i in range(array.shape[0]):
@@ -272,7 +274,7 @@ def fix_metric(prefix):
         print(f)
         array = f(array)
 
-    np.save('../../data/{}_metric.npy'.format(prefix), array)
+    np.save(PATH + '{}_metric.npy'.format(prefix), array)
 
 def apply_tsne(inpath, outpath, dim):
     dists = np.load(inpath)

@@ -8,7 +8,7 @@ sys.path.append('..')
 from holstep import Holstep, HolstepTreeParser, QuickHolstepSeqParser
 from data import dump_data, load_data
 
-PATH = '..\\..\\data\\model\\'
+PATH = '..\\..\\data\\premodel\\'
 
 def main():
     steps = []
@@ -36,7 +36,7 @@ def main():
 
 def STEP_id_lists():
     print('CONJECTURES')
-    cids = np.load('../../data/subset_conjecture_ids.npy')
+    cids = np.load('../../data/vissetup/subset_conjecture_ids.npy')
     train_cids = cids[cids < 10000]
     test_cids = cids[cids >= 10000]
     np.save(PATH + 'train_conjecture_ids.npy', train_cids)
@@ -275,7 +275,7 @@ def build_conjecture_token_bag(part_prefix):
             
     print(result)
     print(result.shape)
-    np.save(PATH + 'PC-A_{}_conjecture_token_bag.npy'.format(part_prefix), result)
+    np.save(PATH + '{}_conjecture_token_bag.npy'.format(part_prefix), result)
 
 class Ref:
     
@@ -390,6 +390,8 @@ def build_model_training_map(part_prefix):
         l.save()
     # 27,197,491
     
+###############################################################################
+   
 def iter_trees(data_prefix, part_prefix):
     return iter_files('{}_{}_trees_'.format(part_prefix, data_prefix))
             
