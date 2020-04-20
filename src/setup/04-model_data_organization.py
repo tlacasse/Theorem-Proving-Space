@@ -21,6 +21,7 @@ def main():
     steps.append(STEP_train_token_ids)
     steps.append(STEP_relationships)
     steps.append(STEP_train_conjecture_token_bag)
+    steps.append(STEP_train_premise_subtrees)
     for step in steps:
         print()
         print(step)
@@ -83,6 +84,9 @@ def STEP_relationships():
     
 def STEP_train_conjecture_token_bag():
     build_conjecture_token_bag('train')
+    
+def STEP_train_premise_subtrees():
+    build_premise_subtrees('train')
     
 ###############################################################################
 
@@ -253,6 +257,60 @@ def build_conjecture_token_bag(part_prefix):
     print(result.shape)
     np.save(PATH + 'PC-A_{}_conjecture_token_bag.npy'.format(part_prefix), result)
 
+class Ref:
+    
+    def __init__(self):
+        self.subtreemap = dict()
+        self.subtreemap[''] = 0
+        self.subtreemaplist = ['']
+        self.subtreelist = []
+        self.sti = 0
+        self.counter = 0
+   
+def build_premise_subtrees(part_prefix):
+    tokens = load_data(PATH + '{}_premise_tokens_ids.data'.format(part_prefix))
+    
+    def save(t, n):
+        n = ("000000000" + str(n))[-9:]
+        dump_data(PATH + '{}_premise_subtrees_{}.data'.format(part_prefix, n), t)
+    
+    def worksubtree(pid, tree, ref, depth=0):
+        first_child = 0
+        second_child = 0
+        l1, l2 = 0, 0
+        if len(tree.children) >= 1:
+            first_child, l1 = worksubtree(pid, tree.children[0], ref, depth=depth+1)
+        if len(tree.children) >= 2:
+            second_child, l2 = worksubtree(pid, tree.children[1], ref, depth=depth+1)
+        layers = max(l1, l2) + 1
+        
+        text = tree.simpletext()
+        if text not in ref.subtreemap:
+            ref.sti += 1
+            ref.subtreemap[text] = ref.sti
+            ref.subtreemaplist.append(text)
+
+        ref.subtreelist.append((pid, tree.value, ref.subtreemap[text], 
+                                first_child, second_child, depth, layers))
+        ref.counter += 1
+        if ref.counter % 1000000 == 0:
+            print(ref.counter)
+            save(ref.subtreelist, ref.counter)
+            ref.subtreelist = []
+        
+        return ref.subtreemap[text], layers
+
+    ref = Ref()
+    for pid, (v, vf, tree) in enumerate(iter_trees('premise', part_prefix)):
+        tree.cleanreplace(v, vf, tokens)
+        worksubtree(pid, tree, ref)
+    save(ref.subtreelist, ref.counter)
+    
+    print()
+    print(len(ref.subtreemaplist))
+    dump_data(PATH + '{}_premise_subtrees_idmap.data'.format(part_prefix), ref.subtreemap)
+    dump_data(PATH + '{}_premise_subtrees_ids.data'.format(part_prefix), ref.subtreemaplist)
+    
 def iter_trees(data_prefix, part_prefix):
     return iter_files('{}_{}_trees_'.format(part_prefix, data_prefix))
             
