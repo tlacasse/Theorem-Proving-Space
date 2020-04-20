@@ -19,6 +19,7 @@ def main():
     steps.append(STEP_train_tokens_unique)
     steps.append(STEP_clean_train_tokens)
     steps.append(STEP_train_token_ids)
+    steps.append(STEP_relationships)
     for step in steps:
         print()
         print(step)
@@ -74,6 +75,10 @@ def STEP_clean_train_tokens():
 def STEP_train_token_ids():
     build_ids('conjecture', 'train', 'unique_tokens', 'tokens')
     build_ids('premise', 'train', 'unique_tokens', 'tokens')
+    
+def STEP_relationships():
+    build_premise_conjecture_relationships('train')
+    build_premise_conjecture_relationships('test')
     
 ###############################################################################
 
@@ -205,6 +210,28 @@ def build_ids(data_prefix, part_prefix, input_counter, output_name):
     
     dump_data(PATH + '{}_{}_{}_ids.data'.format(part_prefix, data_prefix, output_name), ids)
     dump_data(PATH + '{}_{}_{}_idmap.data'.format(part_prefix, data_prefix, output_name), idmap)
+    
+def build_premise_conjecture_relationships(part_prefix):
+    print(part_prefix)
+    cids = np.load(PATH + '{}_conjecture_ids.npy'.format(part_prefix))
+    cidmap = load_data(PATH + '{}_conjecture_idmap.data'.format(part_prefix))
+    pidmap = load_data(PATH + '{}_premise_idmap.data'.format(part_prefix))
+    relationships = None
+    with Holstep.Setup() as db:
+        sql = 'SELECT ConjectureId, StepId FROM ConjectureStep '
+        sql += 'WHERE IsUseful = 1 ORDER BY ConjectureId'
+        relationships = db.ex_many(sql)
+        print('loaded')
+    
+    relationships = [(c, p) for c, p in relationships if c in cids]   
+    result = np.empty((len(relationships), 2), dtype='uint16')
+    for i, (cid, pid) in enumerate(relationships):
+        result[i][0] = cidmap[cid]
+        result[i][1] = pidmap[pid]
+        
+    print(result)
+    print(result.shape)
+    np.save(PATH + '{}_relationships.npy'.format(part_prefix), result)
     
 def iter_trees(data_prefix, part_prefix):
     return iter_files('{}_{}_trees_'.format(part_prefix, data_prefix))
