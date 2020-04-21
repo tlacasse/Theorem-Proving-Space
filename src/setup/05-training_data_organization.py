@@ -51,14 +51,13 @@ def build_conjecture_token_bag(part_prefix):
     
 def build_initial_premise_token_encodings():
     tokens = load_data(PREMODEL + 'train_premise_tokens_ids.data')
-    encodings = []
-    for x in range(len(tokens)):
-        encodings.append(np.random.uniform(low=0.0, high=1.0, size=(PREMISE_TOKEN_DIMENSION,)))
-    encodings.sort(key=np.sum)
+    
+    def get_val(i, bound=0.001):
+        return bound + ((1 - bound - bound) * (i / len(tokens)))
     
     result = np.empty((len(tokens), PREMISE_TOKEN_DIMENSION), dtype='double')
     for i in range(len(tokens)):
-        result[i, :] = encodings[i]
+        result[i, :] = np.full((PREMISE_TOKEN_DIMENSION,), get_val(i), dtype='double')
         
     print(result)
     print(result.shape)
