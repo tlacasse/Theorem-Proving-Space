@@ -187,6 +187,9 @@ class HolstepTreeNode:
             return self.value + ' ' + ' '.join([c.gettext() for c in self.children])
         else:
             return self.value
+        
+    def as_lite(self):
+        return LiteTreeNode(self.value, [c.as_lite() for c in self.children])
             
     def to_list(self):
         result = []
@@ -220,6 +223,43 @@ class HolstepTreeNode:
     
     def __str__(self):
         return repr(self)
+            
+class LiteTreeNode:
+    
+    def __init__(self, value, children):
+        self.value = value
+        self.children = children
+        
+    def printtree(self, indent=0):
+        print(('  ' * indent) + self.value)
+        for c in self.children:
+            c.printtree(indent=indent+1)
+
+    def unique_tokens(self):
+        tokens = Counter()
+        tokens.update([self.value])
+        for c in self.children:
+            tokens.update(c.unique_tokens())
+        return tokens
+    
+    def simpletext(self):
+        return self.value + ''.join([' ' + c.simpletext() for c in self.children])
+    
+    def cleanreplace(self, varlist, varfunclist, tokens, 
+                     varflag='VAR', varfuncflag='VARFUNC', 
+                     unknownflag='UNK', constantflag='_n'):
+        if self.value in varlist:
+            self.value = varflag
+        elif self.value in varfunclist:
+            self.value = varfuncflag
+        elif self.value.startswith('_') and len(self.value) > 1 and self.value[1:].isdigit():
+            self.value = constantflag
+        elif self.value not in tokens:
+            self.value = unknownflag
+        for c in self.children:
+            c.cleanreplace(varlist, varfunclist, tokens, 
+                           varflag=varflag, varfuncflag=varfuncflag,
+                           unknownflag=unknownflag, constantflag=constantflag)
     
 class QuickHolstepSeqParser:
     
