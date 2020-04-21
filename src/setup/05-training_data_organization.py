@@ -16,6 +16,7 @@ def main():
     # if False:
     steps.append(STEP_train_conjecture_token_bag)
     steps.append(STEP_initial_premise_token_encoding)
+    steps.append(STEP_subtree_encodings_structure)
     for step in steps:
         print()
         print(step)
@@ -30,6 +31,10 @@ def STEP_train_conjecture_token_bag():
     
 def STEP_initial_premise_token_encoding():
     build_initial_premise_token_encodings()
+
+def STEP_subtree_encodings_structure():
+    build_subtree_encodings_structure()
+    
     
 ###############################################################################
 
@@ -62,6 +67,14 @@ def build_initial_premise_token_encodings():
     print(result)
     print(result.shape)
     np.save(PATH + 'PC_initial_token_encoding.npy', result)
+    
+def build_subtree_encodings_structure():
+    subtrees = load_data(PREMODEL + 'train_premise_subtrees_idmap.data')
+    result = np.zeros((len(subtrees), PREMISE_TOKEN_DIMENSION), dtype='double')  
+    
+    print(result)
+    print(result.shape)
+    np.save(MODELS + 'PC_subtree_encoding.npy', result)
     
 ###############################################################################
 
