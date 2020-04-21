@@ -1,6 +1,5 @@
 import sys
 import glob
-import re
 import numpy as np
 from collections import Counter
 
@@ -13,6 +12,7 @@ PATH = '..\\..\\data\\premodel\\'
 def main():
     steps = []
     # comment out to limit which steps are executed
+    # if False:
     steps.append(STEP_id_lists)
     steps.append(STEP_train_load_texts)
     steps.append(STEP_train_trees)
@@ -23,7 +23,7 @@ def main():
     steps.append(STEP_relationships)
     steps.append(STEP_relationships_map)
     steps.append(STEP_train_premise_subtrees)
-    steps.append(STEP_model_training_arrays)
+    steps.append(STEP_model_training_map)
     for step in steps:
         print()
         print(step)
@@ -91,7 +91,7 @@ def STEP_relationships_map():
 def STEP_train_premise_subtrees():
     build_premise_subtrees('train')
     
-def STEP_model_training_arrays():
+def STEP_model_training_map():
     build_model_training_map('train')
         
 ###############################################################################
@@ -269,6 +269,7 @@ class Ref:
    
 def build_premise_subtrees(part_prefix):
     tokens = load_data(PATH + '{}_premise_tokens_ids.data'.format(part_prefix))
+    token_map = load_data(PATH + '{}_premise_tokens_idmap.data'.format(part_prefix))
     
     def save(t, n):
         n = ("000000000" + str(n))[-9:]
@@ -290,7 +291,7 @@ def build_premise_subtrees(part_prefix):
             ref.subtreemap[text] = ref.sti
             ref.subtreemaplist.append(text)
 
-        ref.subtreelist.append((pid, tree.value, ref.subtreemap[text], 
+        ref.subtreelist.append((pid, token_map[tree.value], ref.subtreemap[text], 
                                 first_child, second_child, depth, layers))
         ref.counter += 1
         if ref.counter % 1000000 == 0:
@@ -308,6 +309,7 @@ def build_premise_subtrees(part_prefix):
     
     print()
     print(len(ref.subtreemaplist))
+    
     dump_data(PATH + '{}_premise_subtrees_idmap.data'.format(part_prefix), ref.subtreemap)
     dump_data(PATH + '{}_premise_subtrees_ids.data'.format(part_prefix), ref.subtreemaplist)
 
@@ -319,8 +321,8 @@ class LayerRef:
         self.records = []
         self.counter = 0
         
-    def add(self, pstid, left, right, cid):
-        self.records.append([pstid, left, right, cid])
+    def add(self, token, stid, left, right, cid):
+        self.records.append([token, stid, left, right, cid])
         
         self.counter += 1
         if self.counter % 1000000 == 0:
@@ -364,7 +366,7 @@ def build_model_training_map(part_prefix):
         layer = layerrefs[layer]
         
         for cid in relationships[pid]:
-            layer.add(stid, left, right, cid)
+            layer.add(token, stid, left, right, cid)
             
     for l in layerrefs:
         l.save()
