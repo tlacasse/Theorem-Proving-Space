@@ -117,3 +117,5 @@ data
 notes
 _build
 _css
+src/test.py
+src/vae.py
