@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-from collections import Counter
 import sys
+import glob
+from collections import Counter
 sys.path.append('..')
 from data import load_data
 
@@ -16,14 +17,27 @@ print("zeros: {}".format(sum([1 if x == 0 else 0 for x in counts])))
 print()
 print()
 
-cts = load_data('../../data/conjecture_tokens_per.data')
-all_tokens = []
-for c in cts:
-    for t in c:
-        all_tokens.append(t)
-        
-counts = list(Counter(all_tokens).values())
-
+cts = load_data('../../data/model/train_conjecture_unique_tokens.data')     
+counts = list(cts.values())
 plt.figure()
-plt.title('Token Occurence Histogram')
+plt.title('Conjecture Token Occurrences Histogram')
 sns.countplot(counts)
+
+cts = load_data('../../data/model/train_premise_unique_tokens.data')     
+counts = list(cts.values())
+plt.figure()
+plt.title('Premise Token Occurrences Histogram')
+sns.countplot(counts)
+
+print()
+print()
+
+def iter_premise_subtrees():   
+    for f in glob.glob('../../data/model/train_premise_subtrees_0*'):
+        trees = load_data(f)
+        print(f)
+        for t in trees:
+            yield t
+
+cts = Counter([layers for a, b, c, d, e, f, layers in iter_premise_subtrees()])
+print(cts.most_common(100))
