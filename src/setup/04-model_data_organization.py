@@ -1,6 +1,5 @@
 import sys
 import glob
-import re
 import numpy as np
 from collections import Counter
 
@@ -13,6 +12,7 @@ PATH = '..\\..\\data\\premodel\\'
 def main():
     steps = []
     # comment out to limit which steps are executed
+    # if False:
     steps.append(STEP_id_lists)
     steps.append(STEP_train_load_texts)
     steps.append(STEP_train_trees)
@@ -23,7 +23,7 @@ def main():
     steps.append(STEP_relationships)
     steps.append(STEP_relationships_map)
     steps.append(STEP_train_premise_subtrees)
-    steps.append(STEP_model_training_arrays)
+    steps.append(STEP_model_training_map)
     for step in steps:
         print()
         print(step)
@@ -91,7 +91,7 @@ def STEP_relationships_map():
 def STEP_train_premise_subtrees():
     build_premise_subtrees('train')
     
-def STEP_model_training_arrays():
+def STEP_model_training_map():
     build_model_training_map('train')
         
 ###############################################################################
@@ -308,6 +308,7 @@ def build_premise_subtrees(part_prefix):
     
     print()
     print(len(ref.subtreemaplist))
+    
     dump_data(PATH + '{}_premise_subtrees_idmap.data'.format(part_prefix), ref.subtreemap)
     dump_data(PATH + '{}_premise_subtrees_ids.data'.format(part_prefix), ref.subtreemaplist)
 

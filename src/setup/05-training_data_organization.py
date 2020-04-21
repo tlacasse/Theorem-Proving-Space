@@ -13,6 +13,7 @@ MODELS = '..\\..\\data\\models\\'
 def main():
     steps = []
     # comment out to limit which steps are executed
+    # if False:
     steps.append(STEP_train_conjecture_token_bag)
     steps.append(STEP_initial_premise_token_encoding)
     for step in steps:
