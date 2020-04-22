@@ -5,6 +5,18 @@ from tensorflow.keras.utils import plot_model
 from tensorflow.keras import backend as K
 from var import PREMISE_TOKEN_DIMENSION
 
+class _PATH:
+    
+    def __init__(self):
+        self.prefix = '..\\data\\'
+        self.training = 'training\\'
+        self.models = 'models\\'
+
+PATH = _PATH()
+
+TRAINING = lambda: (PATH.prefix + PATH.training)
+MODELS = lambda: (PATH.prefix + PATH.models)
+
 # http://louistiao.me/posts/implementing-variational-autoencoders-in-keras-beyond-the-quickstart-tutorial/
 
 # only to affect loss
@@ -34,7 +46,7 @@ class PC_Space_A:
         self.DECODER_LAYER_DIM_1 = decoder_layer_dim_1
         self.DECODER_LAYER_DIM_2 = decoder_layer_dim_2
         self.INPUT_DIM = PREMISE_TOKEN_DIMENSION
-        self.OUTPUT_DIM = np.load('../data/training/PC_train_conjecture_token_bag.npy').shape[1]
+        self.OUTPUT_DIM = np.load(TRAINING() + 'PC_train_conjecture_token_bag.npy').shape[1]
         
         # recursive encoder
         left = Input(shape=(PREMISE_TOKEN_DIMENSION,), name='input_left')
@@ -82,8 +94,8 @@ class PC_Space_A:
         self.model.summary()
         
     def plot_model(self):
-        plot_model(self.model, to_file='../data/models/PC-Space-A.png',
+        plot_model(self.model, to_file=(MODELS() + 'PC-Space-A.png'),
                    show_shapes=True, show_layer_names=True)
-        plot_model(self.decoder, to_file='../data/models/PC-Space-A_decoder.png',
+        plot_model(self.decoder, to_file=(MODELS() + 'PC-Space-A_decoder.png'),
                    show_shapes=True, show_layer_names=True)
 
