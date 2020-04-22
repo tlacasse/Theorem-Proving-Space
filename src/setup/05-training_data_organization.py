@@ -7,24 +7,37 @@ sys.path.append('..')
 from data import load_data
 from var import PREMISE_TOKEN_DIMENSION
 
-PATH = '..\\..\\data\\training\\'
-PREMODEL = '..\\..\\data\\premodel\\'
-MODELS = '..\\..\\data\\models\\'
+class _PATH:
+
+    def __init__(self):
+        self.prefix = '..\\..\\data\\'
+        self.path = 'training\\'
+        self.premodel = 'premodel\\'
+        self.models = 'models\\'
+        
+_P = _PATH()
+
+PATH = lambda: (_P.prefix + _P.path)
+PREMODEL = lambda: (_P.prefix + _P.premodel)
+MODELS = lambda: (_P.prefix + _P.models)
 
 def main():
-    steps = []
-    # comment out to limit which steps are executed
-    # if False:
-    steps.append(STEP_train_conjecture_token_bag)
-    steps.append(STEP_initial_premise_token_encoding)
-    steps.append(STEP_subtree_encodings_structure)
-    steps.append(STEP_training_arrays)
-    for step in steps:
-        print()
-        print(step)
-        print()
-        step()
-        print()
+    def run_steps():
+        steps = []
+        # if False:
+        steps.append(STEP_train_conjecture_token_bag)
+        steps.append(STEP_initial_premise_token_encoding)
+        steps.append(STEP_subtree_encodings_structure)
+        steps.append(STEP_training_arrays)
+        for step in steps:
+            print()
+            print(step)
+            print()
+            step()
+            print()
+            
+    run_steps()
+    # STEP_local_test_subset(run_steps)
 
 ###############################################################################       
     
@@ -40,12 +53,16 @@ def STEP_subtree_encodings_structure():
 def STEP_training_arrays():
     build_training_arrays()
     
+def STEP_local_test_subset(loop):
+    _P.prefix = '..\\..\\data\\local\\'
+    loop()
+    
 ###############################################################################
 
 def build_conjecture_token_bag(part_prefix):
-    cids = np.load(PREMODEL + '{}_conjecture_ids.npy'.format(part_prefix))
-    tokens = load_data(PREMODEL + '{}_conjecture_tokens_ids.data'.format(part_prefix))
-    tokenmap = load_data(PREMODEL + '{}_conjecture_tokens_idmap.data'.format(part_prefix))
+    cids = np.load(PREMODEL() + '{}_conjecture_ids.npy'.format(part_prefix))
+    tokens = load_data(PREMODEL() + '{}_conjecture_tokens_ids.data'.format(part_prefix))
+    tokenmap = load_data(PREMODEL() + '{}_conjecture_tokens_idmap.data'.format(part_prefix))
     
     result = np.zeros((cids.shape[0], len(tokens)), dtype='uint8')
     for i, (v, vf, tree) in enumerate(iter_trees('conjecture', part_prefix)):
@@ -56,10 +73,10 @@ def build_conjecture_token_bag(part_prefix):
             
     print(result)
     print(result.shape)
-    np.save(PATH + 'PC_{}_conjecture_token_bag.npy'.format(part_prefix), result)
+    np.save(PATH() + 'PC_{}_conjecture_token_bag.npy'.format(part_prefix), result)
     
 def build_initial_premise_token_encodings():
-    tokens = load_data(PREMODEL + 'train_premise_tokens_ids.data')
+    tokens = load_data(PREMODEL() + 'train_premise_tokens_ids.data')
     
     def get_val(i, bound=0.001):
         return bound + ((1 - bound - bound) * (i / len(tokens)))
@@ -70,15 +87,15 @@ def build_initial_premise_token_encodings():
         
     print(result)
     print(result.shape)
-    np.save(PATH + 'PC_initial_token_encoding.npy', result)
+    np.save(PATH() + 'PC_initial_token_encoding.npy', result)
     
 def build_subtree_encodings_structure():
-    subtrees = load_data(PREMODEL + 'train_premise_subtrees_idmap.data')
+    subtrees = load_data(PREMODEL() + 'train_premise_subtrees_idmap.data')
     result = np.zeros((len(subtrees), PREMISE_TOKEN_DIMENSION), dtype='double')  
     
     print(result)
     print(result.shape)
-    np.save(MODELS + 'PC_subtree_encoding.npy', result)
+    np.save(MODELS() + 'PC_subtree_encoding.npy', result)
     
 def build_training_arrays():
     #conjecture_records = np.load(PATH + 'PC_train_conjecture_token_bag.npy')
@@ -86,7 +103,7 @@ def build_training_arrays():
                     '11-15', '16-30', 'gt30', 'whole']
     
     def iter_records(layer_group):
-        for f in glob.glob(records_train__trees_0.format(layer_group) + '*'):
+        for f in glob.glob(records_train__trees_0().format(layer_group) + '*'):
             yield f
     
     for layer in layer_groups:
@@ -109,15 +126,15 @@ def build_training_arrays():
             print(X.shape)
             print(Y)
             print(Y.shape)
-            np.save(PATH + 'points/PC_{}_premise_map_{}.npy'.format(layer, c), X)
-            np.save(PATH + 'points/PC-A_{}_conjecture_tokens_{}.npy'.format(layer, c), Y)
+            np.save(PATH() + 'points/PC_{}_premise_map_{}.npy'.format(layer, c), X)
+            np.save(PATH() + 'points/PC-A_{}_conjecture_ids_{}.npy'.format(layer, c), Y)
     
 ###############################################################################
 
-records_train__trees_0 = PREMODEL + 'records\\train_{}_0'
+records_train__trees_0 = lambda: (PREMODEL() + 'records\\train_{}_0')
 
 def iter_trees(data_prefix, part_prefix):
-    return iter_files(PREMODEL + 'trees/{}_{}_trees_'.format(part_prefix, data_prefix))
+    return iter_files(PREMODEL() + 'trees/{}_{}_trees_'.format(part_prefix, data_prefix))
 
 def iter_files(fileprefix):   
     for f in glob.glob('{}*'.format(fileprefix)):
@@ -127,7 +144,7 @@ def iter_files(fileprefix):
             yield t
           
 def get_iter_records_count(layer_group):
-    path = records_train__trees_0.format(layer_group) + '*'
+    path = records_train__trees_0().format(layer_group) + '*'
     last_path = list(glob.glob(path))[-1]
     last_path = last_path[last_path.rfind('_'):]
     return int(re.sub('[^0-9]', '', last_path))
