@@ -49,15 +49,15 @@ class PC_Space_A:
         self.OUTPUT_DIM = np.load(TRAINING() + 'PC_train_conjecture_token_bag.npy').shape[1]
         
         # recursive encoder
+        token = Input(shape=(PREMISE_TOKEN_DIMENSION,), name='input_token')
         left = Input(shape=(PREMISE_TOKEN_DIMENSION,), name='input_left')
         right = Input(shape=(PREMISE_TOKEN_DIMENSION,), name='input_right')
-        token = Input(shape=(PREMISE_TOKEN_DIMENSION,), name='input_token')
         
+        token_h = Dense(PREMISE_TOKEN_DIMENSION, activation='relu')(token)
         left_h = Dense(PREMISE_TOKEN_DIMENSION, activation='relu')(left)
         right_h = Dense(PREMISE_TOKEN_DIMENSION, activation='relu')(right)
-        token_h = Dense(PREMISE_TOKEN_DIMENSION, activation='relu')(token)
         
-        tree = Add()([left_h, right_h, token_h])
+        tree = Add()([token_h, left_h, right_h])
         tree = Activation('relu', name='tree_encoding')(tree)
 
         # build latent distribution
@@ -69,7 +69,7 @@ class PC_Space_A:
         z_std = Lambda(lambda t: K.exp(.5*t))(z_log_std)
         
         # build dist encoder
-        self.distencoder = Model(inputs=[left, right, token], outputs=z_mean, name='distencoder')
+        self.distencoder = Model(inputs=[token, left, right], outputs=z_mean, name='distencoder')
         
         # build distribution reparameterization (move noise out of gradient)
         noise = Input(tensor=K.random_normal(stddev=1.0, shape=(K.shape(token)[0], self.LATENT_DIM)))
@@ -84,7 +84,7 @@ class PC_Space_A:
         self.decoder = decoder
         
         # combine model
-        self.model = Model(inputs=[left, right, token, noise], outputs=decoder(z), name='pc_space_a')
+        self.model = Model(inputs=[token, left, right, noise], outputs=decoder(z), name='pc_space_a')
         self.model.compile(optimizer='rmsprop', loss=nll)
         
         # build encoder
