@@ -16,7 +16,7 @@ class _STATE:
     def __init__(self):
         self.holstep_pages = PageResults(19)
         self.mizar_pages = PageResults(19)
-        self.holstep_conjecture_ids = np.load('data/holstep_conjecture_ids.npy')
+        self.holstep_conjecture_ids = np.load('data/vissetup/holstep_conjecture_ids.npy')
 
 STATE = _STATE()
 
@@ -102,7 +102,7 @@ def mizar_theorem_get(i):
 def visuals_data(file):
     if (file is None or file == '' or file == 'none'):
         raise Exception('Visualization data file not specified.')
-    file = 'data/{}.npy'.format(file)
+    file = 'data/vissetup/{}.npy'.format(file)
     data = np.load(file).tolist()
     
     for i, point in enumerate(data):
